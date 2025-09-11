@@ -109,7 +109,7 @@ export const appConfig = {
     kakao: 'https://pf.kakao.com/_keepup',
     terms: '/terms',
     privacy: '/privacy',
-    email: 'support@keepup.kr'
+    email: 'jobro@gmail.com'
   },
   
   seo: {

@@ -127,12 +127,12 @@ export default function Footer() {
         
         <FooterBottom>
           <Copyright>
-            © 2024 KeepUp. All rights reserved.
+            © 2025 KeepUp. All rights reserved.
           </Copyright>
           <BusinessInfo>
-            사업자등록번호: 000-00-00000 | 대표: 홍길동<br />
-            주소: 서울특별시 강남구 테헤란로 123, 456호<br />
-            통신판매업신고번호: 2024-서울강남-0000
+            사업자등록번호: 635-21-02551 | 대표: 김영섭<br />
+            주소: 세종특별시 남세종로 358, 214동<br />
+            통신판매업신고번호: 2025-세종-0568
           </BusinessInfo>
         </FooterBottom>
       </Container>
