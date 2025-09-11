@@ -1,12 +1,10 @@
 'use client';
 
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { colors, spacing, typography } from '@/styles';
 import { appConfig as config } from '@/lib/config';
 import Button from '../Button';
-import CTAForm from '../CTAForm';
 
 const HeroContainer = styled.section`
   background: linear-gradient(135deg, ${colors.background} 0%, ${colors.surface} 100%);
@@ -76,35 +74,8 @@ const ButtonGroup = styled(motion.div)`
   }
 `;
 
-const FormContainer = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
-const MockupContainer = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${colors.surface};
-  border-radius: 20px;
-  padding: ${spacing.xl}px;
-  border: 1px solid ${colors.border};
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-`;
 
-const MockupImage = styled.div`
-  width: 300px;
-  height: 600px;
-  background: linear-gradient(135deg, ${colors.primary}20 0%, ${colors.primaryDark}20 100%);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${colors.textSecondary};
-  font-size: ${typography.caption.fontSize}px;
-  border: 1px solid ${colors.border};
-`;
 
 const BackgroundElements = styled.div`
   position: absolute;

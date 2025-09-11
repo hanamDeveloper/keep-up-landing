@@ -1,8 +1,7 @@
 'use client';
 
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { colors, spacing, typography, borderRadius } from '@/styles';
+import { colors, spacing, typography } from '@/styles';
 import { appConfig as config } from '@/lib/config';
 import { Mail, MessageCircle } from 'lucide-react';
 
