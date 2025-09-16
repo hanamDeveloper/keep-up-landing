@@ -9,7 +9,7 @@ export default function KakaoPage() {
     const target = "keepup://kakao" + qs;
 
     // 앱으로 이동 시도
-    window.location.replace(target);
+    // window.location.replace(target);
   }, []);
 
   return <div style={{ color: "white", background: "#0f0f23", height: "100vh" }}>KakaoPage</div>;
