@@ -105,11 +105,20 @@ export const appConfig = {
     }
   },
   
+  payment: {
+    bankName: '국민은행',
+    accountNumber: '123456-78-901234',
+    accountHolder: '(주)KeepUp',
+    defaultAmount: 10000,
+    description: 'KeepUp 챌린지 참가비'
+  },
+  
   links: {
     kakao: 'https://pf.kakao.com/_keepup',
     terms: '/terms',
     privacy: '/privacy',
-    email: 'jobro@gmail.com'
+    payment: '/payment',
+    email: 'support@keepup.kr'
   },
   
   seo: {
