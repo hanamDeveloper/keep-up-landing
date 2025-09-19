@@ -3,14 +3,28 @@ import { useEffect } from "react";
 
 export default function KakaoPage() {
   useEffect(() => {
-    // 현재 URL의 쿼리스트링 (?code=...&state=...)
     const qs = window.location.search || "";
-    // 앱 스킴으로 붙여서 리다이렉트
     const target = "keepup://kakao" + qs;
 
-    // 앱으로 이동 시도
-    window.location.replace(target);
+    // 1) 약간의 지연 후 커스텀 스킴 시도
+    const t1 = setTimeout(() => {
+      window.location.href = target; // href 먼저
+    }, 50);
+
+    // 2) 혹시 막히면 replace 재시도
+    const t2 = setTimeout(() => {
+      window.location.replace(target);
+    }, 400);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
-  return <div style={{ color: "white", background: "#0f0f23", height: "100vh" }}>KakaoPage</div>;
+  return (
+    <div style={{ color: "white", background: "#0f0f23", height: "100vh" }}>
+      KakaoPage
+    </div>
+  );
 }
