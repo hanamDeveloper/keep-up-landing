@@ -14,7 +14,9 @@ import {
   XCircle,
   AlertCircle,
   Calendar,
-  MessageCircle
+  MessageCircle,
+  Minus,
+  Ban
 } from 'lucide-react';
 import { API } from '@/api/axios';
 
@@ -229,24 +231,36 @@ const StatusBadge = styled.span<{ status: string }>`
   font-weight: 600;
   background: ${props => {
     switch (props.status) {
+      case 'NONE':
+        return 'rgba(107, 114, 128, 0.1)';
       case 'WAIT':
         return 'rgba(245, 158, 11, 0.1)';
       case 'APPROVE':
         return 'rgba(16, 185, 129, 0.1)';
       case 'REJECT':
         return 'rgba(239, 68, 68, 0.1)';
+      case 'DISMISSAL':
+        return 'rgba(139, 92, 246, 0.1)';
+      case 'OBJECTION':
+        return 'rgba(59, 130, 246, 0.1)';
       default:
         return 'rgba(107, 114, 128, 0.1)';
     }
   }};
   color: ${props => {
     switch (props.status) {
+      case 'NONE':
+        return '#6b7280';
       case 'WAIT':
         return '#f59e0b';
       case 'APPROVE':
         return '#10b981';
       case 'REJECT':
         return '#ef4444';
+      case 'DISMISSAL':
+        return '#8b5cf6';
+      case 'OBJECTION':
+        return '#3b82f6';
       default:
         return '#6b7280';
     }
@@ -257,9 +271,10 @@ const ActionButtons = styled.div`
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
 `;
 
-const ActionButton = styled(motion.button)<{ variant: 'approve' | 'reject' | 'secondary' }>`
+const ActionButton = styled(motion.button)<{ variant: 'approve' | 'reject' | 'secondary' | 'info' }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -289,6 +304,15 @@ const ActionButton = styled(motion.button)<{ variant: 'approve' | 'reject' | 'se
           &:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+          }
+        `;
+      case 'info':
+        return `
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          color: white;
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
           }
         `;
       case 'secondary':
@@ -493,7 +517,7 @@ interface CertifyItem {
   username: string;
   profileImageFile: ProfileImageFile | null;
   certifyFile: CertifyFile;
-  certifyStatus: 'WAIT' | 'APPROVE' | 'REJECT';
+  certifyStatus: 'NONE' | 'WAIT' | 'APPROVE' | 'REJECT' | 'DISMISSAL' | 'OBJECTION';
   objectionReason: string | null;
 }
 
@@ -515,7 +539,7 @@ export default function CertifyListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'approve' | 'reject' | null>(null);
+  const [modalType, setModalType] = useState<'approve' | 'reject' | 'appeal-approve' | 'appeal-reject' | null>(null);
   const [selectedCertify, setSelectedCertify] = useState<CertifyItem | null>(null);
   const [reason, setReason] = useState('');
   const router = useRouter();
@@ -554,26 +578,35 @@ export default function CertifyListPage() {
     setShowModal(true);
   };
 
-  const handleAppeal = async (certify: CertifyItem) => {
-    try {
-      await API.put(`/admin/challenge/${challengeId}/${certify.certifyId}`, {
-        objectionReason: reason || '이의신청 처리'
-      });
-      // 목록 새로고침
-      fetchCertifyList();
-    } catch (error) {
-      console.error('이의신청 처리 실패:', error);
-    }
+  const handleAppealApprove = (certify: CertifyItem) => {
+    setSelectedCertify(certify);
+    setModalType('appeal-approve');
+    setShowModal(true);
+  };
+
+  const handleAppealReject = (certify: CertifyItem) => {
+    setSelectedCertify(certify);
+    setModalType('appeal-reject');
+    setShowModal(true);
   };
 
   const handleModalSubmit = async () => {
     if (!selectedCertify || !modalType) return;
 
     try {
-      await API.put(`/admin/challenge/${challengeId}/${selectedCertify.certifyId}/certify`, {
-        approved: modalType === 'approve',
-        reason: reason
-      });
+      if (modalType === 'approve' || modalType === 'reject') {
+        // 일반 인증 승인/거절
+        await API.put(`/admin/challenge/${challengeId}/${selectedCertify.certifyId}/certify`, {
+          approved: modalType === 'approve',
+          reason: reason
+        });
+      } else if (modalType === 'appeal-approve' || modalType === 'appeal-reject') {
+        // 이의신청 승인/거절
+        await API.put(`/admin/challenge/${challengeId}/${selectedCertify.certifyId}`, {
+          approved: modalType === 'appeal-approve',
+          reason: reason
+        });
+      }
 
       setShowModal(false);
       setReason('');
@@ -581,7 +614,7 @@ export default function CertifyListPage() {
       // 목록 새로고침
       fetchCertifyList();
     } catch (error) {
-      console.error('인증 처리 실패:', error);
+      console.error('처리 실패:', error);
     }
   };
 
@@ -606,15 +639,68 @@ export default function CertifyListPage() {
 
   const getStatusText = (status: string) => {
     switch (status) {
+      case 'NONE': return '없음';
       case 'WAIT': return '대기';
       case 'APPROVE': return '승인';
       case 'REJECT': return '거절';
+      case 'DISMISSAL': return '기각';
+      case 'OBJECTION': return '이의신청';
       default: return '알 수 없음';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'NONE': return <Minus size={12} />;
+      case 'WAIT': return <AlertCircle size={12} />;
+      case 'APPROVE': return <CheckCircle size={12} />;
+      case 'REJECT': return <XCircle size={12} />;
+      case 'DISMISSAL': return <Ban size={12} />;
+      case 'OBJECTION': return <MessageCircle size={12} />;
+      default: return <AlertCircle size={12} />;
     }
   };
 
   const getInitials = (name: string) => {
     return name.charAt(0).toUpperCase();
+  };
+
+  const getModalTitle = () => {
+    switch (modalType) {
+      case 'approve': return '인증 승인';
+      case 'reject': return '인증 거절';
+      case 'appeal-approve': return '이의신청 승인';
+      case 'appeal-reject': return '이의신청 거절';
+      default: return '';
+    }
+  };
+
+  const getModalIcon = () => {
+    switch (modalType) {
+      case 'approve':
+      case 'appeal-approve':
+        return <CheckCircle size={20} color="#10b981" />;
+      case 'reject':
+      case 'appeal-reject':
+        return <XCircle size={20} color="#ef4444" />;
+      default:
+        return null;
+    }
+  };
+
+  const getModalButtonText = () => {
+    switch (modalType) {
+      case 'approve': return '승인';
+      case 'reject': return '거절';
+      case 'appeal-approve': return '이의신청 승인';
+      case 'appeal-reject': return '이의신청 거절';
+      default: return '';
+    }
+  };
+
+  const canTakeAction = (certify: CertifyItem) => {
+    // WAIT 상태이거나 OBJECTION 상태인 경우에만 액션 가능
+    return certify.certifyStatus === 'WAIT' || certify.certifyStatus === 'OBJECTION';
   };
 
   if (isLoading) {
@@ -753,6 +839,7 @@ export default function CertifyListPage() {
                         <UserId>@{certify.username} (ID: {certify.userId})</UserId>
                       </UserDetails>
                       <StatusBadge status={certify.certifyStatus}>
+                        {getStatusIcon(certify.certifyStatus)}
                         {getStatusText(certify.certifyStatus)}
                       </StatusBadge>
                     </UserInfo>
@@ -782,37 +869,62 @@ export default function CertifyListPage() {
                     )}
 
                     <ActionButtons>
-                      {certify.certifyStatus === 'WAIT' && (
+                      {canTakeAction(certify) && (
                         <>
-                          <ActionButton
-                            variant="approve"
-                            onClick={() => handleApprove(certify)}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <CheckCircle size={16} />
-                            승인
-                          </ActionButton>
-                          <ActionButton
-                            variant="reject"
-                            onClick={() => handleReject(certify)}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <XCircle size={16} />
-                            거절
-                          </ActionButton>
+                          {certify.certifyStatus === 'WAIT' && (
+                            <>
+                              <ActionButton
+                                variant="approve"
+                                onClick={() => handleApprove(certify)}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                <CheckCircle size={16} />
+                                승인
+                              </ActionButton>
+                              <ActionButton
+                                variant="reject"
+                                onClick={() => handleReject(certify)}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                <XCircle size={16} />
+                                거절
+                              </ActionButton>
+                            </>
+                          )}
+                          {certify.certifyStatus === 'OBJECTION' && (
+                            <>
+                              <ActionButton
+                                variant="approve"
+                                onClick={() => handleAppealApprove(certify)}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                <CheckCircle size={16} />
+                                이의신청 승인
+                              </ActionButton>
+                              <ActionButton
+                                variant="reject"
+                                onClick={() => handleAppealReject(certify)}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                <XCircle size={16} />
+                                이의신청 거절
+                              </ActionButton>
+                            </>
+                          )}
                         </>
                       )}
-                      {certify.objectionReason && (
+                      {!canTakeAction(certify) && (
                         <ActionButton
-                          variant="secondary"
-                          onClick={() => handleAppeal(certify)}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                          variant="info"
+                          disabled
+                          style={{ opacity: 0.6, cursor: 'not-allowed' }}
                         >
-                          <MessageCircle size={16} />
-                          이의신청 처리
+                          {getStatusIcon(certify.certifyStatus)}
+                          {getStatusText(certify.certifyStatus)}
                         </ActionButton>
                       )}
                     </ActionButtons>
@@ -839,25 +951,16 @@ export default function CertifyListPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <ModalTitle>
-              {modalType === 'approve' ? (
-                <>
-                  <CheckCircle size={20} color="#10b981" />
-                  인증 승인
-                </>
-              ) : (
-                <>
-                  <XCircle size={20} color="#ef4444" />
-                  인증 거절
-                </>
-              )}
+              {getModalIcon()}
+              {getModalTitle()}
             </ModalTitle>
             
             <FormGroup>
               <FormLabel>
-                {modalType === 'approve' ? '승인' : '거절'} 사유
+                {modalType?.includes('approve') ? '승인' : '거절'} 사유
               </FormLabel>
               <FormTextarea
-                placeholder={`${modalType === 'approve' ? '승인' : '거절'} 사유를 입력하세요...`}
+                placeholder={`${modalType?.includes('approve') ? '승인' : '거절'} 사유를 입력하세요...`}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
               />
@@ -878,7 +981,7 @@ export default function CertifyListPage() {
                 variant="primary"
                 onClick={handleModalSubmit}
               >
-                {modalType === 'approve' ? '승인' : '거절'}
+                {getModalButtonText()}
               </ModalButton>
             </ModalButtons>
           </ModalContent>

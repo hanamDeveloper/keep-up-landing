@@ -408,7 +408,7 @@ export default function AdminPayments() {
   const [searchTerm, setSearchTerm] = useState("");
   const [userStatusFilter, setUserStatusFilter] = useState<string>("all");
   const [challengeStatusFilter, setChallengeStatusFilter] = useState<string>("all");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
 
   useEffect(() => {

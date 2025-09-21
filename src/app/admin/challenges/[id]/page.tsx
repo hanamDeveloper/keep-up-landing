@@ -547,7 +547,7 @@ interface ChallengeDetailResponse {
 export default function ChallengeDetailPage() {
   const [challenge, setChallenge] = useState<ChallengeDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<'approve' | 'reject' | null>(null);
   const [reason, setReason] = useState('');
