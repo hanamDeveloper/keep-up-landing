@@ -9,12 +9,12 @@ export default function KakaoPage() {
     // 1) 약간의 지연 후 커스텀 스킴 시도
     const t1 = setTimeout(() => {
       window.location.href = target; // href 먼저
-    }, 50);
+    }, 1000);
 
     // 2) 혹시 막히면 replace 재시도
     const t2 = setTimeout(() => {
       window.location.replace(target);
-    }, 400);
+    }, 1000);
 
     return () => {
       clearTimeout(t1);

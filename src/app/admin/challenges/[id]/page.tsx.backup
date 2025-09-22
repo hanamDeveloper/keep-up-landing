@@ -18,14 +18,14 @@ import {
   MessageCircle,
   Eye,
   Edit3,
+  Save,
   Trash2,
+  Plus,
   Calendar,
-  Link,
   Tag,
 } from "lucide-react";
 import { API } from "@/api/axios";
-import { FILE_RESPONSE } from "@/hooks/useFileUpload";
-import ChallengeEditForm from "./components/ChallengeEditForm";
+import { useFileUpload, FILE_RESPONSE } from "@/hooks/useFileUpload";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -153,6 +153,73 @@ const Thumbnail = styled.img`
 const ChallengeInfo = styled.div`
   flex: 1;
 `;
+const FormGroup = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const FormLabel = styled.label`
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+`;
+
+const FormInput = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  background: white;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+`;
+
+const FormTextarea = styled.textarea`
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  background: white;
+  transition: all 0.2s ease;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+`;
+
+const FormSelect = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  background: white;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+`;
+
+const FormHelp = styled.p`
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0 0;
+`;
 
 const ChallengeStats = styled.div`
   display: grid;
@@ -197,82 +264,6 @@ const StatValue = styled.div`
   color: #1f2937;
 `;
 
-const DateSection = styled.div`
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background: rgba(102, 126, 234, 0.05);
-  border-radius: 0.75rem;
-  border: 1px solid rgba(102, 126, 234, 0.1);
-`;
-
-const DateItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const DateLabel = styled.span`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
-  min-width: 60px;
-`;
-
-const DateValue = styled.span`
-  font-size: 0.875rem;
-  color: #6b7280;
-`;
-
-const DayTypeSection = styled.div`
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background: rgba(102, 126, 234, 0.05);
-  border-radius: 0.75rem;
-  border: 1px solid rgba(102, 126, 234, 0.1);
-`;
-
-const DayTypeGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-`;
-
-const DayTypeChip = styled.div`
-  padding: 0.25rem 0.75rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-`;
-
-const LinkSection = styled.div`
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background: rgba(102, 126, 234, 0.05);
-  border-radius: 0.75rem;
-  border: 1px solid rgba(102, 126, 234, 0.1);
-`;
-
-const LinkItem = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 500;
-  
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 const GuidelinesSection = styled.div`
   margin-top: 2rem;
 `;
@@ -308,6 +299,19 @@ const GuidelineItem = styled.div`
   background: rgba(102, 126, 234, 0.05);
   border-radius: 0.75rem;
   border: 1px solid rgba(102, 126, 234, 0.1);
+`;
+
+const GuidelineInput = styled.input`
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+  }
 `;
 
 const GuidelineNumber = styled.div`
@@ -353,6 +357,7 @@ const ActionButton = styled(motion.button)<{
     | "secondary"
     | "info"
     | "edit"
+    | "save"
     | "delete";
 }>`
   display: flex;
@@ -401,6 +406,15 @@ const ActionButton = styled(motion.button)<{
           &:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+          }
+        `;
+      case "save":
+        return `
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          color: white;
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
           }
         `;
       case "delete":
@@ -504,13 +518,8 @@ interface ChallengeDetail {
   title: string;
   content: string;
   price: number;
-  fee: number;
   guidelineList: string[];
   needCheck: boolean;
-  startDate: string;
-  endDate: string;
-  dayTypeList: string[];
-  link: string;
 }
 
 interface ChallengeDetailResponse {
@@ -520,21 +529,16 @@ interface ChallengeDetailResponse {
   message: string;
 }
 
-const DAY_TYPE_LABELS: { [key: string]: string } = {
-  MON: "월요일",
-  TUE: "화요일",
-  WED: "수요일",
-  THU: "목요일",
-  FRI: "금요일",
-  SAT: "토요일",
-  SUN: "일요일",
-};
-
 export default function ChallengeDetailPage() {
   const [challenge, setChallenge] = useState<ChallengeDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [editedChallenge, setEditedChallenge] = useState<
+    Partial<ChallengeDetail>
+  >({});
+  const [editedGuidelines, setEditedGuidelines] = useState<string[]>([]);
+  const [newGuideline, setNewGuideline] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<
     "approve" | "reject" | "delete" | null
@@ -544,6 +548,14 @@ export default function ChallengeDetailPage() {
   const router = useRouter();
   const params = useParams();
   const challengeId = params.id as string;
+  const {
+    uploadFile,
+    isUploading: isFileUploading,
+    error: fileUploadError,
+  } = useFileUpload();
+  const [thumbnailFile, setThumbnailFile] = useState<FILE_RESPONSE | null>(
+    null
+  );
 
   useEffect(() => {
     if (challengeId) {
@@ -557,7 +569,10 @@ export default function ChallengeDetailPage() {
         `/admin/challenge/${challengeId}`
       );
       if (response.data && response.data.result && response.data.data) {
-        setChallenge(response.data.data);
+        setChallenge(response.data.data); 
+        setEditedChallenge(response.data.data);
+        setEditedGuidelines(response.data.data.guidelineList || []);
+        setThumbnailFile(response.data.data.thumbnailFile || null);
       }
     } catch (error) {
       console.error("챌린지 상세 정보 로드 실패:", error);
@@ -568,40 +583,15 @@ export default function ChallengeDetailPage() {
 
   const handleEdit = () => {
     setIsEditing(true);
+    setEditedChallenge(challenge || {});
+    setEditedGuidelines(challenge?.guidelineList || []);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-  };
-
-  const handleSave = async (editedChallenge: Partial<ChallengeDetail>, editedGuidelines: string[]) => {
-    if (!challenge) return;
-
-    try {
-      await API.put(`/admin/challenge/${challengeId}`, {
-        id: challenge.id,
-        title: editedChallenge.title || challenge.title,
-        content: editedChallenge.content || challenge.content,
-        categoryCode: editedChallenge.categoryType || challenge.categoryType,
-        certifyTypeCode: "PICTURE",
-        startDate: editedChallenge.startDate || challenge.startDate,
-        endDate: editedChallenge.endDate || challenge.endDate,
-        price: editedChallenge.price || challenge.price,
-        fee: editedChallenge.fee ?? challenge.fee ?? 0,
-        guidelineList: editedGuidelines,
-        dayTypeList: editedChallenge.dayTypeList || challenge.dayTypeList,
-        link: editedChallenge.link || challenge.link,
-        thumbnailFile: editedChallenge.thumbnailFile || challenge.thumbnailFile,
-        needCheck: editedChallenge.needCheck !== undefined ? editedChallenge.needCheck : challenge.needCheck,
-        approved: true,
-        reason: '',
-      });
-
-      setIsEditing(false);
-      fetchChallengeDetail(); // 데이터 새로고침
-    } catch (error) {
-      console.error("챌린지 수정 실패:", error);
-    }
+    setEditedChallenge(challenge || {});
+    setEditedGuidelines(challenge?.guidelineList || []);
+    setNewGuideline("");
   };
 
   const handleDelete = () => {
@@ -619,7 +609,40 @@ export default function ChallengeDetailPage() {
     setShowModal(true);
   };
 
+  const handleThumbnailUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    console.log("file", file);
+    if (!file) return;
+
+    const uploadedFile = await uploadFile(file, "challenge");
+    console.log("uploadedFile", uploadedFile);
+    if (uploadedFile) {
+      setThumbnailFile(uploadedFile[0]);
+      setEditedChallenge({
+        ...editedChallenge,
+        thumbnailFile: uploadedFile[0],
+      });
+    }
+  };
+
   const handleViewCertifications = () => {
+    const handleThumbnailUpload = async (
+      event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const uploadedFile = await uploadFile(file, "challenge");
+      if (uploadedFile) {
+        setThumbnailFile(uploadedFile[0]);
+        setEditedChallenge({
+          ...editedChallenge,
+          thumbnailFile: uploadedFile[0],
+        });
+      }
+    };
     router.push(`/admin/challenges/${challengeId}/certify`);
   };
 
@@ -628,27 +651,26 @@ export default function ChallengeDetailPage() {
 
     try {
       if (modalType === "delete") {
+        // 삭제 API 호출 (실제 API 엔드포인트에 따라 수정 필요)
         await API.delete(`/admin/challenge/${challengeId}`);
         router.push("/admin/challenges");
         return;
       }
 
-      await API.put(`/admin/challenge/${challengeId}`, {
+            await API.put(`/admin/challenge/${challengeId}`, {
         id: challenge.id,
-        title: challenge.title,
-        content: challenge.content,
-        categoryCode: challenge.categoryType,
+        title: editedChallenge.title || challenge.title,
+        content: editedChallenge.content || challenge.content,
+        categoryCode: editedChallenge.categoryType || challenge.categoryType,
         certifyTypeCode: "PICTURE",
-        startDate: challenge.startDate,
-        endDate: challenge.endDate,
-        price: challenge.price,
-        guidelineList: challenge.guidelineList,
-        dayTypeList: challenge.dayTypeList,
-        link: challenge.link,
+        startDate: "2025-01-01",
+        endDate: "2025-01-31",
+        price: editedChallenge.price || challenge.price,
+        guidelineList: editedGuidelines,
         reason: reason,
         approved: modalType === "approve",
-        thumbnailFile: challenge.thumbnailFile,
-        kakaoLink: modalType === "approve" ? kakaoLink : "",
+        thumbnailFile: thumbnailFile || challenge.thumbnailFile,
+        link: modalType === "approve" ? kakaoLink : "",
         fee: 0,
       });
 
@@ -671,6 +693,23 @@ export default function ChallengeDetailPage() {
     }
   };
 
+  const addGuideline = () => {
+    if (newGuideline.trim()) {
+      setEditedGuidelines([...editedGuidelines, newGuideline.trim()]);
+      setNewGuideline("");
+    }
+  };
+
+  const removeGuideline = (index: number) => {
+    setEditedGuidelines(editedGuidelines.filter((_, i) => i !== index));
+  };
+
+  const updateGuideline = (index: number, value: string) => {
+    const updated = [...editedGuidelines];
+    updated[index] = value;
+    setEditedGuidelines(updated);
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("ko-KR", {
       style: "currency",
@@ -691,16 +730,6 @@ export default function ChallengeDetailPage() {
       default:
         return "알 수 없음";
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "미설정";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
   };
 
   if (isLoading) {
@@ -803,19 +832,13 @@ export default function ChallengeDetailPage() {
           <Title>챌린지 상세</Title>
         </Header>
 
-        {isEditing ? (
-          <ChallengeEditForm
-            challenge={challenge}
-            onSave={handleSave}
-            onCancel={handleCancel}
-          />
-        ) : (
-          <ChallengeDetailCard
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            <ChallengeHeader>
+        <ChallengeDetailCard
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <ChallengeHeader>
+            <div style={{ position: "relative" }}>
               <Thumbnail
                 src={challenge?.thumbnailFile?.path || ""}
                 alt={challenge.title}
@@ -823,160 +846,285 @@ export default function ChallengeDetailPage() {
                   (e.target as HTMLImageElement).src = "/placeholder-image.png";
                 }}
               />
-              <ChallengeInfo>
+              {isEditing && (
                 <div
                   style={{
-                    fontSize: "1.875rem",
-                    fontWeight: "700",
-                    color: "#1f2937",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  {challenge.title}
-                </div>
-
-                <div
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "0.25rem 0.75rem",
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    position: "absolute",
+                    top: "0.5rem",
+                    right: "0.5rem",
+                    background: "rgba(0, 0, 0, 0.7)",
                     color: "white",
-                    borderRadius: "9999px",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    marginBottom: "1rem",
+                    padding: "0.5rem",
+                    borderRadius: "0.5rem",
+                    cursor: "pointer",
                   }}
                 >
-                  {getCategoryText(challenge.categoryType)}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleThumbnailUpload}
+                    style={{ display: "none" }}
+                    id="thumbnail-upload"
+                  />
+                  <label
+                    htmlFor="thumbnail-upload"
+                    style={{ cursor: "pointer" }}
+                  >
+                    {isFileUploading ? "업로드 중..." : "썸네일 변경"}
+                  </label>
                 </div>
-
+              )}
+              {fileUploadError && (
                 <div
                   style={{
-                    color: "#6b7280",
-                    lineHeight: "1.6",
-                    marginBottom: "1.5rem",
+                    position: "absolute",
+                    bottom: "0.5rem",
+                    left: "0.5rem",
+                    right: "0.5rem",
+                    background: "rgba(239, 68, 68, 0.9)",
+                    color: "white",
+                    padding: "0.5rem",
+                    borderRadius: "0.5rem",
+                    fontSize: "0.75rem",
                   }}
                 >
-                  {challenge.content}
+                  {fileUploadError}
                 </div>
+              )}
+            </div>
+            <ChallengeInfo>
+              <FormGroup>
+                <FormLabel>챌린지 제목</FormLabel>
+                {isEditing ? (
+                  <FormInput
+                    value={editedChallenge.title || ""}
+                    onChange={(e) =>
+                      setEditedChallenge({
+                        ...editedChallenge,
+                        title: e.target.value,
+                      })
+                    }
+                    placeholder="챌린지 제목을 입력하세요"
+                  />
+                ) : (
+                  <div
+                    style={{
+                      fontSize: "1.875rem",
+                      fontWeight: "700",
+                      color: "#1f2937",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    {challenge.title}
+                  </div>
+                )}
+              </FormGroup>
 
-                <div
-                  style={{
-                    fontSize: "1.125rem",
-                    fontWeight: "700",
-                    color: "#1f2937",
-                    marginBottom: "1rem",
-                  }}
+              <FormGroup>
+                <FormLabel>카테고리</FormLabel>
+                {isEditing ? (
+                  <FormSelect
+                    value={
+                      editedChallenge.categoryType || challenge.categoryType
+                    }
+                    onChange={(e) =>
+                      setEditedChallenge({
+                        ...editedChallenge,
+                        categoryType: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="EXERCISE">운동</option>
+                    <option value="STUDY">공부</option>
+                    <option value="IMPROVEMENT">자기계발</option>
+                    <option value="ETC">기타</option>
+                  </FormSelect>
+                ) : (
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      padding: "0.25rem 0.75rem",
+                      background:
+                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                      color: "white",
+                      borderRadius: "9999px",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    {getCategoryText(challenge.categoryType)}
+                  </div>
+                )}
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>챌린지 설명</FormLabel>
+                {isEditing ? (
+                  <FormTextarea
+                    value={editedChallenge.content || ""}
+                    onChange={(e) =>
+                      setEditedChallenge({
+                        ...editedChallenge,
+                        content: e.target.value,
+                      })
+                    }
+                    placeholder="챌린지 설명을 입력하세요"
+                  />
+                ) : (
+                  <div
+                    style={{
+                      color: "#6b7280",
+                      lineHeight: "1.6",
+                      marginBottom: "1.5rem",
+                    }}
+                  >
+                    {challenge.content}
+                  </div>
+                )}
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>참가비</FormLabel>
+                {isEditing ? (
+                  <FormInput
+                    type="number"
+                    value={editedChallenge.price || challenge.price}
+                    onChange={(e) =>
+                      setEditedChallenge({
+                        ...editedChallenge,
+                        price: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    placeholder="참가비를 입력하세요"
+                  />
+                ) : (
+                  <div
+                    style={{
+                      fontSize: "1.125rem",
+                      fontWeight: "700",
+                      color: "#1f2937",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    {formatCurrency(challenge.price)}
+                  </div>
+                )}
+              </FormGroup>
+
+              <FormGroup>
+                <FormLabel>검수 필요 여부</FormLabel>
+                {isEditing ? (
+                  <FormSelect
+                    value={editedChallenge.needCheck ? "true" : "false"}
+                    onChange={(e) =>
+                      setEditedChallenge({
+                        ...editedChallenge,
+                        needCheck: e.target.value === "true",
+                      })
+                    }
+                  >
+                    <option value="true">예</option>
+                    <option value="false">아니오</option>
+                  </FormSelect>
+                ) : (
+                  <div
+                    style={{
+                      fontSize: "1.125rem",
+                      fontWeight: "700",
+                      color: "#1f2937",
+                    }}
+                  >
+                    {challenge.needCheck ? "예" : "아니오"}
+                  </div>
+                )}
+              </FormGroup>
+
+              <ChallengeStats>
+                <StatItem>
+                  <StatIcon>
+                    <DollarSign size={20} color="white" />
+                  </StatIcon>
+                  <StatContent>
+                    <StatLabel>참가비</StatLabel>
+                    <StatValue>{formatCurrency(challenge.price)}</StatValue>
+                  </StatContent>
+                </StatItem>
+
+                <StatItem>
+                  <StatIcon>
+                    <FileText size={20} color="white" />
+                  </StatIcon>
+                  <StatContent>
+                    <StatLabel>검수 필요</StatLabel>
+                    <StatValue>
+                      {challenge.needCheck ? "예" : "아니오"}
+                    </StatValue>
+                  </StatContent>
+                </StatItem>
+              </ChallengeStats>
+            </ChallengeInfo>
+          </ChallengeHeader>
+
+          <GuidelinesSection>
+            <GuidelinesHeader>
+              <GuidelinesTitle>
+                <AlertCircle size={20} />
+                챌린지 가이드라인
+              </GuidelinesTitle>
+              {isEditing && (
+                <ActionButton
+                  variant="edit"
+                  onClick={addGuideline}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  {formatCurrency(challenge.price)}
-                </div>
+                  <Plus size={16} />
+                  추가
+                </ActionButton>
+              )}
+            </GuidelinesHeader>
 
-                <div
-                  style={{
-                    fontSize: "1.125rem",
-                    fontWeight: "700",
-                    color: "#1f2937",
-                  }}
-                >
-                  검수 필요: {challenge.needCheck ? "예" : "아니오"}
-                </div>
-
-                <ChallengeStats>
-                  <StatItem>
-                    <StatIcon>
-                      <DollarSign size={20} color="white" />
-                    </StatIcon>
-                    <StatContent>
-                      <StatLabel>참가비</StatLabel>
-                      <StatValue>{formatCurrency(challenge.price)}</StatValue>
-                    </StatContent>
-                  </StatItem>
-
-                  <StatItem>
-                    <StatIcon>
-                      <Tag size={20} color="white" />
-                    </StatIcon>
-                    <StatContent>
-                      <StatLabel>수수료</StatLabel>
-                      <StatValue>{formatCurrency(challenge.fee)}</StatValue>
-                    </StatContent>
-                  </StatItem>
-
-                  <StatItem>
-                    <StatIcon>
-                      <FileText size={20} color="white" />
-                    </StatIcon>
-                    <StatContent>
-                      <StatLabel>검수 필요</StatLabel>
-                      <StatValue>
-                        {challenge.needCheck ? "예" : "아니오"}
-                      </StatValue>
-                    </StatContent>
-                  </StatItem>
-                </ChallengeStats>
-              </ChallengeInfo>
-            </ChallengeHeader>
-
-            <DateSection>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                <Calendar size={16} color="#667eea" />
-                <span style={{ fontSize: "0.875rem", fontWeight: "600", color: "#374151" }}>
-                  챌린지 기간
-                </span>
-              </div>
-              <DateItem>
-                <DateLabel>시작일:</DateLabel>
-                <DateValue>{formatDate(challenge.startDate)}</DateValue>
-              </DateItem>
-              <DateItem>
-                <DateLabel>종료일:</DateLabel>
-                <DateValue>{formatDate(challenge.endDate)}</DateValue>
-              </DateItem>
-            </DateSection>
-
-            {challenge.dayTypeList && challenge.dayTypeList.length > 0 && (
-              <DayTypeSection>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                  <Calendar size={16} color="#667eea" />
-                  <span style={{ fontSize: "0.875rem", fontWeight: "600", color: "#374151" }}>
-                    챌린지 요일
-                  </span>
-                </div>
-                <DayTypeGrid>
-                  {challenge.dayTypeList.map((dayType) => (
-                    <DayTypeChip key={dayType}>
-                      {DAY_TYPE_LABELS[dayType] || dayType}
-                    </DayTypeChip>
-                  ))}
-                </DayTypeGrid>
-              </DayTypeSection>
-            )}
-
-            {challenge.link && (
-              <LinkSection>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                  <Link size={16} color="#667eea" />
-                  <span style={{ fontSize: "0.875rem", fontWeight: "600", color: "#374151" }}>
-                    관련 링크
-                  </span>
-                </div>
-                <LinkItem href={challenge.link} target="_blank" rel="noopener noreferrer">
-                  <Link size={14} />
-                  {challenge.link}
-                </LinkItem>
-              </LinkSection>
-            )}
-
-            <GuidelinesSection>
-              <GuidelinesHeader>
-                <GuidelinesTitle>
-                  <AlertCircle size={20} />
-                  챌린지 가이드라인
-                </GuidelinesTitle>
-              </GuidelinesHeader>
-
+            {isEditing ? (
+              <GuidelinesList>
+                {editedGuidelines.map((guideline, index) => (
+                  <GuidelineItem key={index}>
+                    <GuidelineNumber>{index + 1}</GuidelineNumber>
+                    <GuidelineInput
+                      value={guideline}
+                      onChange={(e) => updateGuideline(index, e.target.value)}
+                      placeholder="가이드라인을 입력하세요"
+                    />
+                    <ActionButton
+                      variant="delete"
+                      onClick={() => removeGuideline(index)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Trash2 size={16} />
+                    </ActionButton>
+                  </GuidelineItem>
+                ))}
+                <GuidelineItem>
+                  <GuidelineNumber>+</GuidelineNumber>
+                  <GuidelineInput
+                    value={newGuideline}
+                    onChange={(e) => setNewGuideline(e.target.value)}
+                    placeholder="새 가이드라인을 입력하세요"
+                    onKeyPress={(e) => e.key === "Enter" && addGuideline()}
+                  />
+                  <ActionButton
+                    variant="save"
+                    onClick={addGuideline}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Plus size={16} />
+                  </ActionButton>
+                </GuidelineItem>
+              </GuidelinesList>
+            ) : (
               <GuidelinesList>
                 {challenge.guidelineList.map((guideline, index) => (
                   <GuidelineItem key={index}>
@@ -989,67 +1137,89 @@ export default function ChallengeDetailPage() {
                   </GuidelineItem>
                 ))}
               </GuidelinesList>
-            </GuidelinesSection>
-          </ChallengeDetailCard>
-        )}
+            )}
+          </GuidelinesSection>
+        </ChallengeDetailCard>
 
-        {!isEditing && (
-          <ActionSection
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <ActionTitle>챌린지 관리</ActionTitle>
-            <ActionButtons>
-              <ActionButton
-                variant="info"
-                onClick={handleViewCertifications}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Eye size={20} />
-                인증 목록
-              </ActionButton>
+        <ActionSection
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <ActionTitle>챌린지 관리</ActionTitle>
+          <ActionButtons>
+            <ActionButton
+              variant="info"
+              onClick={handleViewCertifications}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Eye size={20} />
+              인증 목록
+            </ActionButton>
 
-              <ActionButton
-                variant="edit"
-                onClick={handleEdit}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Edit3 size={20} />
-                편집
-              </ActionButton>
-              <ActionButton
-                variant="approve"
-                onClick={handleApprove}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <CheckCircle size={20} />
-                승인
-              </ActionButton>
-              <ActionButton
-                variant="reject"
-                onClick={handleReject}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <XCircle size={20} />
-                거절
-              </ActionButton>
-              <ActionButton
-                variant="delete"
-                onClick={handleDelete}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Trash2 size={20} />
-                삭제
-              </ActionButton>
-            </ActionButtons>
-          </ActionSection>
-        )}
+            {isEditing ? (
+              <>
+                <ActionButton
+                  variant="save"
+                  onClick={handleApprove}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Save size={20} />
+                  저장
+                </ActionButton>
+                <ActionButton
+                  variant="secondary"
+                  onClick={handleCancel}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  취소
+                </ActionButton>
+              </>
+            ) : (
+              <>
+                <ActionButton
+                  variant="edit"
+                  onClick={handleEdit}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Edit3 size={20} />
+                  편집
+                </ActionButton>
+                <ActionButton
+                  variant="approve"
+                  onClick={handleApprove}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <CheckCircle size={20} />
+                  승인
+                </ActionButton>
+                <ActionButton
+                  variant="reject"
+                  onClick={handleReject}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <XCircle size={20} />
+                  거절
+                </ActionButton>
+                <ActionButton
+                  variant="delete"
+                  onClick={handleDelete}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Trash2 size={20} />
+                  삭제
+                </ActionButton>
+              </>
+            )}
+          </ActionButtons>
+        </ActionSection>
       </MainContent>
 
       {/* 승인/거절/삭제 모달 */}
