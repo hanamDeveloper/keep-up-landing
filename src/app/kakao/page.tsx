@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { useEffect } from "react";
 
 export default function KakaoPage() {
@@ -6,15 +6,15 @@ export default function KakaoPage() {
     const qs = window.location.search || "";
     const target = "keepup://kakao" + qs;
 
-    // 1) 약간의 지연 후 커스텀 스킴 시도
+    // 1) 앱 스킴 시도
     const t1 = setTimeout(() => {
-      window.location.href = target; // href 먼저
-    }, 1000);
+      window.location.href = target;
+    }, 500);
 
-    // 2) 혹시 막히면 replace 재시도
+    // 2) 실패 시 강제 replace
     const t2 = setTimeout(() => {
       window.location.replace(target);
-    }, 1000);
+    }, 1500);
 
     return () => {
       clearTimeout(t1);
@@ -23,8 +23,9 @@ export default function KakaoPage() {
   }, []);
 
   return (
-    <div style={{ color: "white", background: "#0f0f23", height: "100vh" }}>
-      KakaoPage
+    <div style={{ color: "white", background: "#0f0f23", height: "100vh",
+                  display: "flex", alignItems: "center", justifyContent: "center" }}>
+      Kakao 로그인 연결 중...
     </div>
   );
 }
