@@ -1,12 +1,10 @@
 "use client";
 
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 import { colors, spacing, typography } from "@/styles";
 import { appConfig as config } from "@/lib/config";
 import Button from "../Button";
-import CTAForm from "../CTAForm";
 import Image from "next/image";
 
 const HeroContainer = styled.section`
@@ -85,17 +83,6 @@ const FormContainer = styled(motion.div)`
   @media (max-width: 768px) {
     display: none;
   }
-`;
-
-const MockupContainer = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${colors.surface};
-  border-radius: 20px;
-  padding: ${spacing.xl}px;
-  border: 1px solid ${colors.border};
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 `;
 
 const BackgroundElements = styled.div`

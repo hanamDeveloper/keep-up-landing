@@ -182,7 +182,6 @@ interface ApiResponse<T> {
 export default function ShareChallengePage() {
   const params = useParams<{ challengeId: string }>();
   const search = useSearchParams();
-  const router = useRouter();
 
   const challengeId = params.challengeId;
   const entryId = search.get("entryId");
