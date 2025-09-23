@@ -308,44 +308,44 @@ export default function ShareChallengePage() {
     );
   }
 
-  if (error) {
-    return (
-      <Page>
-        <Container>
-          <Header>
-            <Title>오류 발생</Title>
-            <Subtitle>{error}</Subtitle>
-          </Header>
-          <ErrorMessage>
-            <div>챌린지 ID: {challengeId}</div>
+  // if (error) {
+  //   return (
+  //     <Page>
+  //       <Container>
+  //         <Header>
+  //           <Title>오류 발생</Title>
+  //           <Subtitle>{error}</Subtitle>
+  //         </Header>
+  //         <ErrorMessage>
+  //           <div>챌린지 ID: {challengeId}</div>
 
-            <div>
-              브라우저:{" "}
-              {typeof window !== "undefined" ? navigator.userAgent : "SSR"}
-            </div>
-          </ErrorMessage>
-          <Actions>
-            <StoreButtons>
-              <StoreButton
-                href="https://apps.apple.com/kr/app/keepup"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                📱 App Store
-              </StoreButton>
-              <StoreButton
-                href="https://play.google.com/store/apps/details?id=com.keepup"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                🤖 Google Play
-              </StoreButton>
-            </StoreButtons>
-          </Actions>
-        </Container>
-      </Page>
-    );
-  }
+  //           <div>
+  //             브라우저:{" "}
+  //             {typeof window !== "undefined" ? navigator.userAgent : "SSR"}
+  //           </div>
+  //         </ErrorMessage>
+  //         <Actions>
+  //           <StoreButtons>
+  //             <StoreButton
+  //               href="https://apps.apple.com/kr/app/keepup"
+  //               target="_blank"
+  //               rel="noopener noreferrer"
+  //             >
+  //               📱 App Store
+  //             </StoreButton>
+  //             <StoreButton
+  //               href="https://play.google.com/store/apps/details?id=com.keepup"
+  //               target="_blank"
+  //               rel="noopener noreferrer"
+  //             >
+  //               🤖 Google Play
+  //             </StoreButton>
+  //           </StoreButtons>
+  //         </Actions>
+  //       </Container>
+  //     </Page>
+  //   );
+  // }
 
   if (!detail) {
     return (
