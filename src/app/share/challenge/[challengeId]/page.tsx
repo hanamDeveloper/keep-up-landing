@@ -10,6 +10,7 @@ import {
   SuccessChallengeDetailResponse,
 } from "@/api/challenge";
 import { colors, spacing, borderRadius, typography } from "@/styles/tokens";
+import { categoryMapping } from "@/lib/static";
 
 const Page = styled.div`
   min-height: 100vh;
@@ -220,7 +221,7 @@ export default function ShareChallengePage() {
   const search = useSearchParams();
 
   const challengeId = params.challengeId;
-  const entryId = search.get("entryId");
+
   const joinUrl = search.get("joinUrl");
   const prizeUrl = search.get("prizeUrl");
 
@@ -248,51 +249,16 @@ export default function ShareChallengePage() {
         return;
       }
 
-      console.log(
-        "Fetching data for challengeId:",
-        challengeId,
-        "entryId:",
-        entryId
-      );
-
       try {
         let response;
 
         // 1) entryId가 있으면 완료 상세 우선 조회
-        if (entryId) {
-          console.log(
-            "Trying success endpoint:",
-            `/my/challenge/success/${challengeId}`
-          );
-          try {
-            response = await getSuccessChallengeDetail(parseInt(challengeId));
-            console.log("Success endpoint response:", response);
-          } catch (successError) {
-            console.log(
-              "Success endpoint failed, trying admin endpoint:",
-              successError
-            );
-            // 성공 엔드포인트가 실패하면 관리자 엔드포인트로 fallback
-            response = await API.get<ApiResponse<any>>(
-              `/admin/challenge/${challengeId}`
-            );
-            console.log("Admin endpoint response:", response.data);
-          }
-        } else {
-          // 2) entryId가 없으면 관리자 상세로 기본 정보 표시
-          console.log(
-            "Trying admin endpoint:",
-            `/admin/challenge/${challengeId}`
-          );
-          response = await API.get<ApiResponse<any>>(
-            `/admin/challenge/${challengeId}`
-          );
-          console.log("Admin endpoint response:", response.data);
+        if (challengeId) {
+          response = await getSuccessChallengeDetail(parseInt(challengeId));
         }
 
         if (response?.data) {
-          const data = (response.data as any).data;
-          console.log("Setting detail with data:", data);
+          const data = response.data as any;
 
           // 새로운 스키마에 맞게 데이터 매핑
           setDetail({
@@ -327,7 +293,7 @@ export default function ShareChallengePage() {
     };
 
     fetchData();
-  }, [challengeId, entryId]);
+  }, [challengeId]);
 
   if (isLoading) {
     return (
@@ -352,7 +318,7 @@ export default function ShareChallengePage() {
           </Header>
           <ErrorMessage>
             <div>챌린지 ID: {challengeId}</div>
-            <div>Entry ID: {entryId || "없음"}</div>
+
             <div>
               브라우저:{" "}
               {typeof window !== "undefined" ? navigator.userAgent : "SSR"}
@@ -391,7 +357,7 @@ export default function ShareChallengePage() {
           </Header>
           <ErrorMessage>
             <div>챌린지 ID: {challengeId}</div>
-            <div>Entry ID: {entryId || "없음"}</div>
+
             <div>상세 정보가 로드되지 않았습니다.</div>
           </ErrorMessage>
           <Actions>
@@ -485,7 +451,7 @@ export default function ShareChallengePage() {
           <SectionTitle>📋 챌린지 정보</SectionTitle>
           <Row>
             <RowLabel>카테고리</RowLabel>
-            <RowValue>{detail.categoryType ?? "-"}</RowValue>
+            <RowValue>{categoryMapping[detail.categoryType as keyof typeof categoryMapping] ?? "-"}</RowValue>
           </Row>
           <Row>
             <RowLabel>참가비</RowLabel>
