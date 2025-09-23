@@ -4,22 +4,8 @@ import { useEffect } from "react";
 export default function KakaoPage() {
   useEffect(() => {
     const qs = window.location.search || "";
-    const target = "keepup://kakao" + qs;
-
-    // 1) 앱 스킴 시도
-    const t1 = setTimeout(() => {
-      window.location.href = target;
-    }, 500);
-
-    // 2) 실패 시 강제 replace
-    const t2 = setTimeout(() => {
-      window.location.replace(target);
-    }, 1500);
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    // 타이머 없이 즉시 넘기기
+    window.location.replace(`keepup://kakao${qs}`);
   }, []);
 
   return (
