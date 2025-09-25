@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "@emotion/styled";
-import { useSearchParams } from "next/navigation";
 import { colors, spacing, borderRadius, typography } from "@/styles/tokens";
 
 const Page = styled.div`
@@ -153,12 +152,21 @@ const SuccessMessage = styled.div`
 `;
 
 export default function AccountDeletionPage() {
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
-  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  // 컴포넌트 마운트 시 해시에서 토큰 추출
+  useState(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith("#token=")) {
+        const extractedToken = hash.substring(7); // "#token=" 제거
+        setToken(extractedToken);
+      }
+    }
+  });
 
   // WebView에서 메시지를 받기 위한 함수
   const sendMessageToApp = (type: string, data?: any) => {
@@ -201,7 +209,7 @@ export default function AccountDeletionPage() {
         setError(errorMessage);
         sendMessageToApp("DELETE_FAIL", { reason: errorMessage });
       }
-    } catch (err) {
+    } catch {
       const errorMessage = "네트워크 오류가 발생했습니다.";
       setError(errorMessage);
       sendMessageToApp("DELETE_FAIL", { reason: errorMessage });

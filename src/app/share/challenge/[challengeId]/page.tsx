@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import styled from "@emotion/styled";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { API } from "@/api/axios";
 import {
   getSuccessChallengeDetail,
   SuccessChallengeDetail,

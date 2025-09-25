@@ -159,7 +159,7 @@ export default function TermsPage() {
           <Section>
             <SectionTitle>제1조 (목적)</SectionTitle>
             <Paragraph>
-              본 약관은 {CONFIG.companyName}(이하 "회사")이 제공하는 습관 형성 챌린지 서비스(이하 "서비스")의 이용과 관련하여 
+              본 약관은 {CONFIG.companyName}(이하 이하 "회사"quot;회사이하 "회사"quot;)이 제공하는 습관 형성 챌린지 서비스(이하 "서비스")의 이용과 관련하여 
               회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
             </Paragraph>
           </Section>

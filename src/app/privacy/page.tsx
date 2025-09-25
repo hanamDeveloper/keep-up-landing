@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { colors, spacing, borderRadius, typography } from "@/styles/tokens";
 
@@ -198,8 +197,8 @@ export default function PrivacyPolicyPage() {
           <MainTitle>개인정보 처리방침</MainTitle>
           <LastUpdatedBadge>최종 업데이트 {CONFIG.lastUpdated}</LastUpdatedBadge>
           <Intro>
-            {CONFIG.companyName}(이하 "회사")은 「개인정보 보호법」 및 관련 법령을 준수하며, 이용자의 개인정보를 소중히 보호하기 위하여 
-            다음과 같이 개인정보 처리방침을 수립·공개합니다. 본 방침은 회사가 제공하는 챌린지 서비스(이하 "서비스") 이용과 관련하여 
+            {CONFIG.companyName}(이하 이하 "회사"quot;회사이하 "회사"quot;)은 「개인정보 보호법」 및 관련 법령을 준수하며, 이용자의 개인정보를 소중히 보호하기 위하여 
+            다음과 같이 개인정보 처리방침을 수립·공개합니다. 본 방침은 회사가 제공하는 챌린지 서비스(이하 이하 "서비스"quot;서비스이하 "서비스"quot;) 이용과 관련하여 
             수집·이용·보관·파기되는 개인정보에 적용됩니다.
           </Intro>
         </Header>
