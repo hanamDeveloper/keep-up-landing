@@ -3,6 +3,9 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { colors, spacing, borderRadius, typography } from "@/styles/tokens";
+import { useSearchParams } from "next/navigation";
+import { API, baseURL } from "@/api/axios";
+import axios from "axios";
 
 const Page = styled.div`
   min-height: 100vh;
@@ -70,7 +73,7 @@ const WarningList = styled.ul`
 
 const WarningItem = styled.li`
   margin-bottom: ${spacing.xs}px;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -124,8 +127,12 @@ const LoadingSpinner = styled.div`
   margin-right: ${spacing.sm}px;
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -155,18 +162,10 @@ export default function AccountDeletionPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
+  // const [token, setToken] = useState<string | null>(null);
 
-  // 컴포넌트 마운트 시 해시에서 토큰 추출
-  useState(() => {
-    if (typeof window !== "undefined") {
-      const hash = window.location.hash;
-      if (hash && hash.startsWith("#token=")) {
-        const extractedToken = hash.substring(7); // "#token=" 제거
-        setToken(extractedToken);
-      }
-    }
-  });
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
   // WebView에서 메시지를 받기 위한 함수
   const sendMessageToApp = (type: string, data?: any) => {
@@ -186,30 +185,30 @@ export default function AccountDeletionPage() {
     setError(null);
 
     try {
-      const response = await fetch("/api/account/delete", {
-        method: "DELETE",
+      const response = await axios.post(`${baseURL}/sign/withdraw`, undefined, {
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      const result = await response.json();
+      console.log("response", response);
 
-      if (response.ok) {
+      if (response.data.result) {
         setSuccess(true);
         sendMessageToApp("DELETE_OK");
-        
+
         // 2초 후 앱으로 성공 메시지 전송
         setTimeout(() => {
           sendMessageToApp("DELETE_OK");
         }, 2000);
       } else {
-        const errorMessage = result.message || "계정 삭제에 실패했습니다.";
+        const errorMessage =
+          response.data.message || "계정 삭제에 실패했습니다.";
         setError(errorMessage);
         sendMessageToApp("DELETE_FAIL", { reason: errorMessage });
       }
-    } catch {
+    } catch (error) {
+      console.log("error", error);
       const errorMessage = "네트워크 오류가 발생했습니다.";
       setError(errorMessage);
       sendMessageToApp("DELETE_FAIL", { reason: errorMessage });
@@ -249,7 +248,9 @@ export default function AccountDeletionPage() {
             <WarningTitle>⚠️ 계정 삭제 시 주의사항</WarningTitle>
             <WarningList>
               <WarningItem>모든 개인정보가 즉시 삭제됩니다</WarningItem>
-              <WarningItem>참여 중인 챌린지는 자동으로 탈락 처리됩니다</WarningItem>
+              <WarningItem>
+                참여 중인 챌린지는 자동으로 탈락 처리됩니다
+              </WarningItem>
               <WarningItem>진행 중인 챌린지 환불은 불가능합니다</WarningItem>
               <WarningItem>삭제된 계정은 복구할 수 없습니다</WarningItem>
             </WarningList>
@@ -264,14 +265,11 @@ export default function AccountDeletionPage() {
 
           {!success && (
             <>
-              <Button
-                onClick={handleDeleteAccount}
-                disabled={isLoading}
-              >
+              <Button onClick={handleDeleteAccount} disabled={isLoading}>
                 {isLoading && <LoadingSpinner />}
                 {isLoading ? "삭제 중..." : "계정 삭제하기"}
               </Button>
-              
+
               <Button variant="secondary" onClick={handleCancel}>
                 취소
               </Button>

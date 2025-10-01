@@ -5,6 +5,7 @@ import { getAccessToken, getNewRefreshToken } from "./signin/api";
 
 
 export const baseURL = "https://api.keep-up.me";
+// export const baseURL = "https://dev-api.keep-up.me";
 
 // 토큰 만료 시간 확인 함수
 const isTokenExpiringSoon = (token: string): boolean => {

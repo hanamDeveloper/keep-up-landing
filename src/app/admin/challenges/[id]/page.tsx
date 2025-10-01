@@ -511,6 +511,7 @@ interface ChallengeDetail {
   endDate: string;
   dayTypeList: string[];
   link: string;
+  modeType: "DAILY" | "GOAL";
 }
 
 interface ChallengeDetailResponse {
@@ -595,6 +596,7 @@ export default function ChallengeDetailPage() {
         needCheck: editedChallenge.needCheck !== undefined ? editedChallenge.needCheck : challenge.needCheck,
         approved: true,
         reason: '',
+        modeType: editedChallenge.modeType || challenge.modeType,
       });
 
       setIsEditing(false);
@@ -650,6 +652,7 @@ export default function ChallengeDetailPage() {
         thumbnailFile: challenge.thumbnailFile,
         kakaoLink: modalType === "approve" ? kakaoLink : "",
         fee: 0,
+        modeType: challenge.modeType,
       });
 
       setShowModal(false);
@@ -871,6 +874,17 @@ export default function ChallengeDetailPage() {
                   }}
                 >
                   {formatCurrency(challenge.price)}
+                </div>
+
+                <div
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    color: "#374151",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  모드 타입: {challenge.modeType === "DAILY" ? "습관 (DAILY)" : "목표 (GOAL)"}
                 </div>
 
                 <div

@@ -302,6 +302,7 @@ interface ChallengeDetail {
   endDate: string;
   dayTypeList: string[];
   link: string;
+  modeType: "DAILY" | "GOAL";
 }
 
 interface ChallengeEditFormProps {
@@ -388,6 +389,7 @@ export default function ChallengeEditForm({
       {
         ...editedChallenge,
         thumbnailFile: thumbnailFile || challenge.thumbnailFile,
+        modeType: editedChallenge.modeType || challenge.modeType,
       },
       editedGuidelines
     );
@@ -588,6 +590,22 @@ export default function ChallengeEditForm({
           }
           placeholder="https://example.com"
         />
+      </FormGroup>
+
+      <FormGroup>
+        <FormLabel>모드 타입</FormLabel>
+        <FormSelect
+          value={editedChallenge.modeType || challenge.modeType}
+          onChange={(e) =>
+            setEditedChallenge({
+              ...editedChallenge,
+              modeType: e.target.value as "DAILY" | "GOAL",
+            })
+          }
+        >
+          <option value="DAILY">습관 (DAILY)</option>
+          <option value="GOAL">목표 (GOAL)</option>
+        </FormSelect>
       </FormGroup>
 
       <GuidelinesSection>
