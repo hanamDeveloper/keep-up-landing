@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import styled from "@emotion/styled";
 import { colors, spacing, borderRadius, typography } from "@/styles/tokens";
 import { useSearchParams } from "next/navigation";
@@ -158,7 +158,8 @@ const SuccessMessage = styled.div`
   margin-bottom: ${spacing.md}px;
 `;
 
-export default function AccountDeletionPage() {
+// useSearchParams를 사용하는 컴포넌트를 별도로 분리
+function AccountDeletionContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -278,6 +279,31 @@ export default function AccountDeletionPage() {
         </Card>
       </Container>
     </Page>
+  );
+}
+
+// 로딩 컴포넌트
+function LoadingFallback() {
+  return (
+    <Page>
+      <Container>
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          <LoadingSpinner />
+          <div style={{ marginTop: "1rem", color: colors.textSecondary }}>
+            로딩 중...
+          </div>
+        </div>
+      </Container>
+    </Page>
+  );
+}
+
+// 메인 컴포넌트 - Suspense로 감싸기
+export default function AccountDeletionPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AccountDeletionContent />
+    </Suspense>
   );
 }
 
