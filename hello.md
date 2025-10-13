@@ -199,7 +199,7 @@ certifyTypeCode : PICTURE, VIDEO
 
 **PUT** `/admin/challenge/{challengeId}/{userId}/pay`
 
-**목적**: 보증금 입금 확인 처리
+**목적**: 참가비 입금 확인 처리
 
 **요청**:
 ```typescript

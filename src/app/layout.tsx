@@ -23,11 +23,17 @@ export const metadata: Metadata = {
   authors: [{ name: 'KeepUp Team' }],
   creator: 'KeepUp',
   publisher: 'KeepUp',
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  },
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
+  
   metadataBase: new URL('https://keepup.kr'),
   alternates: {
     canonical: '/',

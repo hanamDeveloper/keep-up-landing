@@ -128,7 +128,7 @@ export default function PricingSection() {
             transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
           >
-            보증금 성격으로, 시작 전 환불 가능합니다
+            참가비 성격으로, 시작 전 환불 가능합니다
           </SectionSubtitle>
         </SectionHeader>
         
@@ -156,7 +156,7 @@ export default function PricingSection() {
         >
           <InfoText>
             <Info size={16} />
-            보증금 성격, 시작 전 환불 가능
+            참가비 성격, 시작 전 환불 가능
           </InfoText>
         </InfoBox>
       </Container>
