@@ -34,14 +34,14 @@ export const metadata: Metadata = {
     telephone: false,
   },
   
-  metadataBase: new URL('https://keepup.kr'),
+  metadataBase: new URL('https://keep-up.me'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: config.seo.title,
     description: config.seo.description,
-    url: 'https://keepup.kr',
+    url: 'https://keep-up.me',
     siteName: 'KeepUp',
     images: [
       {
@@ -93,8 +93,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "KeepUp",
-              "url": "https://keepup.kr",
-              "logo": "https://keepup.kr/logo.png",
+              "url": "https://keep-up.me",
+              "logo": "https://keep-up.me/logo.png",
               "description": config.seo.description,
               "contactPoint": {
                 "@type": "ContactPoint",
@@ -115,11 +115,11 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "KeepUp",
-              "url": "https://keepup.kr",
+              "url": "https://keep-up.me",
               "description": config.seo.description,
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://keepup.kr/search?q={search_term_string}",
+                "target": "https://keep-up.me/search?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               }
             })

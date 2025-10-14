@@ -303,6 +303,7 @@ interface ChallengeDetail {
   dayTypeList: string[];
   link: string;
   modeType: "DAILY" | "GOAL";
+  certifyTypeCode?: "PICTURE" | "TEXT" | "LINK";
 }
 
 interface ChallengeEditFormProps {
@@ -605,6 +606,23 @@ export default function ChallengeEditForm({
         >
           <option value="DAILY">습관 (DAILY)</option>
           <option value="GOAL">목표 (GOAL)</option>
+        </FormSelect>
+      </FormGroup>
+
+      <FormGroup>
+        <FormLabel>인증 타입</FormLabel>
+        <FormSelect
+          value={editedChallenge.certifyTypeCode || challenge.certifyTypeCode || "PICTURE"}
+          onChange={(e) =>
+            setEditedChallenge({
+              ...editedChallenge,
+              certifyTypeCode: e.target.value as "PICTURE" | "TEXT" | "LINK",
+            })
+          }
+        >
+          <option value="PICTURE">사진 인증</option>
+          <option value="TEXT">텍스트 인증</option>
+          <option value="LINK">링크 인증</option>
         </FormSelect>
       </FormGroup>
 

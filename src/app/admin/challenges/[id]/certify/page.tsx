@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import styled from '@emotion/styled';
-import { 
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { motion } from "framer-motion";
+import styled from "@emotion/styled";
+import {
   ArrowLeft,
-  Trophy, 
+  Trophy,
   LogOut,
   Menu,
   X,
@@ -16,9 +16,9 @@ import {
   Calendar,
   MessageCircle,
   Minus,
-  Ban
-} from 'lucide-react';
-import { API } from '@/api/axios';
+  Ban,
+} from "lucide-react";
+import { API } from "@/api/axios";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -31,8 +31,8 @@ const Sidebar = styled(motion.div)<{ isOpen: boolean }>`
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-right: 1px solid rgba(255, 255, 255, 0.2);
-  display: ${props => props.isOpen ? 'block' : 'none'};
-  
+  display: ${(props) => (props.isOpen ? "block" : "none")};
+
   @media (min-width: 1024px) {
     display: block;
   }
@@ -63,12 +63,18 @@ const NavItem = styled(motion.a)<{ active?: boolean }>`
   text-decoration: none;
   font-weight: 500;
   transition: all 0.2s ease;
-  background: ${props => props.active ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent'};
-  color: ${props => props.active ? 'white' : '#6b7280'};
-  
+  background: ${(props) =>
+    props.active
+      ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      : "transparent"};
+  color: ${(props) => (props.active ? "white" : "#6b7280")};
+
   &:hover {
-    background: ${props => props.active ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(102, 126, 234, 0.1)'};
-    color: ${props => props.active ? 'white' : '#374151'};
+    background: ${(props) =>
+      props.active
+        ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+        : "rgba(102, 126, 234, 0.1)"};
+    color: ${(props) => (props.active ? "white" : "#374151")};
     transform: translateX(4px);
   }
 `;
@@ -98,7 +104,7 @@ const BackButton = styled(motion.button)`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
@@ -149,8 +155,9 @@ const NeedCheckBadge = styled.span<{ needCheck: boolean }>`
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: ${props => props.needCheck ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)'};
-  color: ${props => props.needCheck ? '#f59e0b' : '#10b981'};
+  background: ${(props) =>
+    props.needCheck ? "rgba(245, 158, 11, 0.1)" : "rgba(16, 185, 129, 0.1)"};
+  color: ${(props) => (props.needCheck ? "#f59e0b" : "#10b981")};
 `;
 
 const CertifyGrid = styled.div`
@@ -166,7 +173,7 @@ const CertifyCard = styled(motion.div)`
   border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -216,7 +223,7 @@ const CertifyImage = styled.img`
   margin-bottom: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
     transform: scale(1.02);
   }
@@ -229,40 +236,40 @@ const StatusBadge = styled.span<{ status: string }>`
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: ${props => {
+  background: ${(props) => {
     switch (props.status) {
-      case 'NONE':
-        return 'rgba(107, 114, 128, 0.1)';
-      case 'WAIT':
-        return 'rgba(245, 158, 11, 0.1)';
-      case 'APPROVE':
-        return 'rgba(16, 185, 129, 0.1)';
-      case 'REJECT':
-        return 'rgba(239, 68, 68, 0.1)';
-      case 'DISMISSAL':
-        return 'rgba(139, 92, 246, 0.1)';
-      case 'OBJECTION':
-        return 'rgba(59, 130, 246, 0.1)';
+      case "NONE":
+        return "rgba(107, 114, 128, 0.1)";
+      case "WAIT":
+        return "rgba(245, 158, 11, 0.1)";
+      case "APPROVE":
+        return "rgba(16, 185, 129, 0.1)";
+      case "REJECT":
+        return "rgba(239, 68, 68, 0.1)";
+      case "DISMISSAL":
+        return "rgba(139, 92, 246, 0.1)";
+      case "OBJECTION":
+        return "rgba(59, 130, 246, 0.1)";
       default:
-        return 'rgba(107, 114, 128, 0.1)';
+        return "rgba(107, 114, 128, 0.1)";
     }
   }};
-  color: ${props => {
+  color: ${(props) => {
     switch (props.status) {
-      case 'NONE':
-        return '#6b7280';
-      case 'WAIT':
-        return '#f59e0b';
-      case 'APPROVE':
-        return '#10b981';
-      case 'REJECT':
-        return '#ef4444';
-      case 'DISMISSAL':
-        return '#8b5cf6';
-      case 'OBJECTION':
-        return '#3b82f6';
+      case "NONE":
+        return "#6b7280";
+      case "WAIT":
+        return "#f59e0b";
+      case "APPROVE":
+        return "#10b981";
+      case "REJECT":
+        return "#ef4444";
+      case "DISMISSAL":
+        return "#8b5cf6";
+      case "OBJECTION":
+        return "#3b82f6";
       default:
-        return '#6b7280';
+        return "#6b7280";
     }
   }};
 `;
@@ -274,7 +281,9 @@ const ActionButtons = styled.div`
   flex-wrap: wrap;
 `;
 
-const ActionButton = styled(motion.button)<{ variant: 'approve' | 'reject' | 'secondary' | 'info' }>`
+const ActionButton = styled(motion.button)<{
+  variant: "approve" | "reject" | "secondary" | "info";
+}>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -285,10 +294,10 @@ const ActionButton = styled(motion.button)<{ variant: 'approve' | 'reject' | 'se
   transition: all 0.2s ease;
   border: none;
   font-size: 0.875rem;
-  
-  ${props => {
+
+  ${(props) => {
     switch (props.variant) {
-      case 'approve':
+      case "approve":
         return `
           background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
@@ -297,7 +306,7 @@ const ActionButton = styled(motion.button)<{ variant: 'approve' | 'reject' | 'se
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
           }
         `;
-      case 'reject':
+      case "reject":
         return `
           background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
           color: white;
@@ -306,7 +315,7 @@ const ActionButton = styled(motion.button)<{ variant: 'approve' | 'reject' | 'se
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
           }
         `;
-      case 'info':
+      case "info":
         return `
           background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
           color: white;
@@ -315,7 +324,7 @@ const ActionButton = styled(motion.button)<{ variant: 'approve' | 'reject' | 'se
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
           }
         `;
-      case 'secondary':
+      case "secondary":
         return `
           background: rgba(107, 114, 128, 0.1);
           color: #374151;
@@ -383,7 +392,7 @@ const FormTextarea = styled.textarea`
   border-radius: 0.75rem;
   font-size: 0.875rem;
   resize: vertical;
-  
+
   &:focus {
     outline: none;
     border-color: #667eea;
@@ -398,17 +407,17 @@ const ModalButtons = styled.div`
   margin-top: 1.5rem;
 `;
 
-const ModalButton = styled.button<{ variant: 'primary' | 'secondary' }>`
+const ModalButton = styled.button<{ variant: "primary" | "secondary" }>`
   padding: 0.75rem 1.5rem;
   border-radius: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
-  
-  ${props => {
+
+  ${(props) => {
     switch (props.variant) {
-      case 'primary':
+      case "primary":
         return `
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
@@ -416,7 +425,7 @@ const ModalButton = styled.button<{ variant: 'primary' | 'secondary' }>`
             transform: translateY(-2px);
           }
         `;
-      case 'secondary':
+      case "secondary":
         return `
           background: rgba(107, 114, 128, 0.1);
           color: #374151;
@@ -436,7 +445,7 @@ const MobileHeader = styled.div`
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  
+
   @media (min-width: 1024px) {
     display: none;
   }
@@ -458,7 +467,7 @@ const LogoutButton = styled(motion.button)`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background: rgba(239, 68, 68, 0.2);
     transform: translateY(-2px);
@@ -480,10 +489,14 @@ const LoadingSpinner = styled.div`
   border-top: 3px solid white;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  
+
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -516,8 +529,15 @@ interface CertifyItem {
   nickname: string;
   username: string;
   profileImageFile: ProfileImageFile | null;
-  certifyFile: CertifyFile;
-  certifyStatus: 'NONE' | 'WAIT' | 'APPROVE' | 'REJECT' | 'DISMISSAL' | 'OBJECTION';
+  certifyFile: CertifyFile | null;
+  certifyLink: string | null;
+  certifyStatus:
+    | "NONE"
+    | "WAIT"
+    | "APPROVE"
+    | "REJECT"
+    | "DISMISSAL"
+    | "OBJECTION";
   objectionReason: string | null;
 }
 
@@ -536,12 +556,17 @@ interface CertifyListResponse {
 
 export default function CertifyListPage() {
   const [certifyData, setCertifyData] = useState<CertifyDateData[]>([]);
+  const [challengeInfo, setChallengeInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<'approve' | 'reject' | 'appeal-approve' | 'appeal-reject' | null>(null);
-  const [selectedCertify, setSelectedCertify] = useState<CertifyItem | null>(null);
-  const [reason, setReason] = useState('');
+  const [modalType, setModalType] = useState<
+    "approve" | "reject" | "appeal-approve" | "appeal-reject" | null
+  >(null);
+  const [selectedCertify, setSelectedCertify] = useState<CertifyItem | null>(
+    null
+  );
+  const [reason, setReason] = useState("");
   const router = useRouter();
   const params = useParams();
   const challengeId = params.id as string;
@@ -549,44 +574,59 @@ export default function CertifyListPage() {
   useEffect(() => {
     if (challengeId) {
       fetchCertifyList();
+      fetchChallengeInfo();
     }
   }, [challengeId]);
 
   const fetchCertifyList = async () => {
     try {
-      const response = await API.get<CertifyListResponse>(`/admin/challenge/${challengeId}/certify`);
+      const response = await API.get<CertifyListResponse>(
+        `/admin/challenge/${challengeId}/certify`
+      );
       if (response.data && response.data.result && response.data.data) {
         setCertifyData(response.data.data);
       }
     } catch (error) {
-      console.error('인증 목록 로드 실패:', error);
+      console.error("인증 목록 로드 실패:", error);
       setCertifyData([]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const fetchChallengeInfo = async () => {
+    try {
+      const response = await API.get(`/admin/challenge/${challengeId}`);
+
+      if (response.data) {
+        setChallengeInfo(response.data.data);
+      }
+    } catch (error) {
+      console.error("챌린지 정보 조회 실패:", error);
+    }
+  };
+
   const handleApprove = (certify: CertifyItem) => {
     setSelectedCertify(certify);
-    setModalType('approve');
+    setModalType("approve");
     setShowModal(true);
   };
 
   const handleReject = (certify: CertifyItem) => {
     setSelectedCertify(certify);
-    setModalType('reject');
+    setModalType("reject");
     setShowModal(true);
   };
 
   const handleAppealApprove = (certify: CertifyItem) => {
     setSelectedCertify(certify);
-    setModalType('appeal-approve');
+    setModalType("appeal-approve");
     setShowModal(true);
   };
 
   const handleAppealReject = (certify: CertifyItem) => {
     setSelectedCertify(certify);
-    setModalType('appeal-reject');
+    setModalType("appeal-reject");
     setShowModal(true);
   };
 
@@ -594,70 +634,108 @@ export default function CertifyListPage() {
     if (!selectedCertify || !modalType) return;
 
     try {
-      if (modalType === 'approve' || modalType === 'reject') {
+      // 인증 타입에 따른 API 요청 데이터 구성
+      const isLinkType = challengeInfo?.certifyTypeCode === "LINK";
+
+      // LINK 타입인 경우 링크 유효성 검사
+      if (isLinkType) {
+        const linkValue = selectedCertify.certifyLink || "";
+        if (!linkValue || linkValue.trim() === "") {
+          alert("링크 인증의 경우 유효한 링크가 필요합니다.");
+          return;
+        }
+      }
+
+      const requestData = {
+        approved: modalType === "approve" || modalType === "appeal-approve",
+        reason: reason,
+        // LINK 타입인 경우 file은 null, link는 실제 링크 값
+        // LINK 타입이 아닌 경우 file은 기존 값, link는 빈 문자열
+        file: isLinkType ? null : selectedCertify.certifyFile,
+        link: isLinkType ? selectedCertify.certifyLink || "" : "",
+      };
+
+      if (modalType === "approve" || modalType === "reject") {
         // 일반 인증 승인/거절
-        await API.put(`/admin/challenge/${challengeId}/${selectedCertify.certifyId}/certify`, {
-          approved: modalType === 'approve',
-          reason: reason
-        });
-      } else if (modalType === 'appeal-approve' || modalType === 'appeal-reject') {
+        await API.put(
+          `/admin/challenge/${challengeId}/${selectedCertify.certifyId}/certify`,
+          requestData
+        );
+      } else if (
+        modalType === "appeal-approve" ||
+        modalType === "appeal-reject"
+      ) {
         // 이의신청 승인/거절
-        await API.put(`/admin/challenge/${challengeId}/${selectedCertify.certifyId}`, {
-          approved: modalType === 'appeal-approve',
-          reason: reason
-        });
+        await API.put(
+          `/admin/challenge/${challengeId}/${selectedCertify.certifyId}`,
+          requestData
+        );
       }
 
       setShowModal(false);
-      setReason('');
+      setReason("");
       setSelectedCertify(null);
       // 목록 새로고침
       fetchCertifyList();
     } catch (error) {
-      console.error('처리 실패:', error);
+      console.error("처리 실패:", error);
     }
   };
 
   const handleLogout = async () => {
     try {
-      await API.post('/admin/logout');
-      router.push('/admin');
+      await API.post("/admin/logout");
+      router.push("/admin");
     } catch (error) {
-      console.error('로그아웃 실패:', error);
-      router.push('/admin');
+      console.error("로그아웃 실패:", error);
+      router.push("/admin");
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
+    return new Date(dateString).toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "long",
     });
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'NONE': return '없음';
-      case 'WAIT': return '대기';
-      case 'APPROVE': return '승인';
-      case 'REJECT': return '거절';
-      case 'DISMISSAL': return '기각';
-      case 'OBJECTION': return '이의신청';
-      default: return '알 수 없음';
+      case "NONE":
+        return "없음";
+      case "WAIT":
+        return "대기";
+      case "APPROVE":
+        return "승인";
+      case "REJECT":
+        return "거절";
+      case "DISMISSAL":
+        return "기각";
+      case "OBJECTION":
+        return "이의신청";
+      default:
+        return "알 수 없음";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'NONE': return <Minus size={12} />;
-      case 'WAIT': return <AlertCircle size={12} />;
-      case 'APPROVE': return <CheckCircle size={12} />;
-      case 'REJECT': return <XCircle size={12} />;
-      case 'DISMISSAL': return <Ban size={12} />;
-      case 'OBJECTION': return <MessageCircle size={12} />;
-      default: return <AlertCircle size={12} />;
+      case "NONE":
+        return <Minus size={12} />;
+      case "WAIT":
+        return <AlertCircle size={12} />;
+      case "APPROVE":
+        return <CheckCircle size={12} />;
+      case "REJECT":
+        return <XCircle size={12} />;
+      case "DISMISSAL":
+        return <Ban size={12} />;
+      case "OBJECTION":
+        return <MessageCircle size={12} />;
+      default:
+        return <AlertCircle size={12} />;
     }
   };
 
@@ -667,21 +745,26 @@ export default function CertifyListPage() {
 
   const getModalTitle = () => {
     switch (modalType) {
-      case 'approve': return '인증 승인';
-      case 'reject': return '인증 거절';
-      case 'appeal-approve': return '이의신청 승인';
-      case 'appeal-reject': return '이의신청 거절';
-      default: return '';
+      case "approve":
+        return "인증 승인";
+      case "reject":
+        return "인증 거절";
+      case "appeal-approve":
+        return "이의신청 승인";
+      case "appeal-reject":
+        return "이의신청 거절";
+      default:
+        return "";
     }
   };
 
   const getModalIcon = () => {
     switch (modalType) {
-      case 'approve':
-      case 'appeal-approve':
+      case "approve":
+      case "appeal-approve":
         return <CheckCircle size={20} color="#10b981" />;
-      case 'reject':
-      case 'appeal-reject':
+      case "reject":
+      case "appeal-reject":
         return <XCircle size={20} color="#ef4444" />;
       default:
         return null;
@@ -690,23 +773,30 @@ export default function CertifyListPage() {
 
   const getModalButtonText = () => {
     switch (modalType) {
-      case 'approve': return '승인';
-      case 'reject': return '거절';
-      case 'appeal-approve': return '이의신청 승인';
-      case 'appeal-reject': return '이의신청 거절';
-      default: return '';
+      case "approve":
+        return "승인";
+      case "reject":
+        return "거절";
+      case "appeal-approve":
+        return "이의신청 승인";
+      case "appeal-reject":
+        return "이의신청 거절";
+      default:
+        return "";
     }
   };
 
   const canTakeAction = (certify: CertifyItem) => {
     // WAIT 상태이거나 OBJECTION 상태인 경우에만 액션 가능
-    return certify.certifyStatus === 'WAIT' || certify.certifyStatus === 'OBJECTION';
+    return (
+      certify.certifyStatus === "WAIT" || certify.certifyStatus === "OBJECTION"
+    );
   };
 
   if (isLoading) {
     return (
       <LoadingContainer>
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: "center" }}>
           <LoadingSpinner />
           <LoadingText>인증 목록을 불러오는 중...</LoadingText>
         </div>
@@ -714,22 +804,31 @@ export default function CertifyListPage() {
     );
   }
 
+  console.log("challengeInfo?.certifyTypeCode", challengeInfo);
+
   return (
     <Container>
       {/* 모바일 헤더 */}
       <MobileHeader>
-        <h1 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1f2937', margin: 0 }}>
+        <h1
+          style={{
+            fontSize: "1.25rem",
+            fontWeight: "700",
+            color: "#1f2937",
+            margin: 0,
+          }}
+        >
           인증 목록
         </h1>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           style={{
-            padding: '0.5rem',
-            borderRadius: '0.5rem',
-            color: '#6b7280',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer'
+            padding: "0.5rem",
+            borderRadius: "0.5rem",
+            color: "#6b7280",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
           }}
         >
           {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
@@ -740,29 +839,29 @@ export default function CertifyListPage() {
         isOpen={sidebarOpen}
         initial={{ x: -280 }}
         animate={{ x: sidebarOpen ? 0 : -280 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
       >
         <SidebarHeader>
           <Logo>KeepUp 관리자</Logo>
         </SidebarHeader>
-        
+
         <Nav>
           <NavItem href="/admin/challenges">
-            <Trophy size={20} style={{ marginRight: '0.75rem' }} />
+            <Trophy size={20} style={{ marginRight: "0.75rem" }} />
             챌린지 관리
           </NavItem>
           <NavItem href="/admin/payments">
-            <Trophy size={20} style={{ marginRight: '0.75rem' }} />
+            <Trophy size={20} style={{ marginRight: "0.75rem" }} />
             결제 관리
           </NavItem>
         </Nav>
-        
+
         <LogoutButton
           onClick={handleLogout}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <LogOut size={20} style={{ marginRight: '0.5rem' }} />
+          <LogOut size={20} style={{ marginRight: "0.5rem" }} />
           로그아웃
         </LogoutButton>
       </Sidebar>
@@ -790,10 +889,18 @@ export default function CertifyListPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div style={{ textAlign: 'center', padding: '3rem' }}>
-              <AlertCircle size={48} color="#6b7280" style={{ marginBottom: '1rem' }} />
-              <h3 style={{ color: '#6b7280', margin: '0 0 0.5rem 0' }}>인증이 없습니다</h3>
-              <p style={{ color: '#9ca3af', margin: 0 }}>아직 제출된 인증이 없습니다.</p>
+            <div style={{ textAlign: "center", padding: "3rem" }}>
+              <AlertCircle
+                size={48}
+                color="#6b7280"
+                style={{ marginBottom: "1rem" }}
+              />
+              <h3 style={{ color: "#6b7280", margin: "0 0 0.5rem 0" }}>
+                인증이 없습니다
+              </h3>
+              <p style={{ color: "#9ca3af", margin: 0 }}>
+                아직 제출된 인증이 없습니다.
+              </p>
             </div>
           </DateSection>
         ) : (
@@ -810,7 +917,7 @@ export default function CertifyListPage() {
                   {formatDate(dateData.date)}
                 </DateTitle>
                 <NeedCheckBadge needCheck={dateData.needCheck}>
-                  {dateData.needCheck ? '검수 필요' : '검수 완료'}
+                  {dateData.needCheck ? "검수 필요" : "검수 완료"}
                 </NeedCheckBadge>
               </DateHeader>
 
@@ -825,10 +932,15 @@ export default function CertifyListPage() {
                     <UserInfo>
                       <ProfileImage>
                         {certify.profileImageFile ? (
-                          <img 
-                            src={certify.profileImageFile.path} 
+                          <img
+                            src={certify.profileImageFile?.path}
                             alt={certify.nickname}
-                            style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                            }}
                           />
                         ) : (
                           getInitials(certify.nickname)
@@ -836,7 +948,9 @@ export default function CertifyListPage() {
                       </ProfileImage>
                       <UserDetails>
                         <UserName>{certify.nickname}</UserName>
-                        <UserId>@{certify.username} (ID: {certify.userId})</UserId>
+                        <UserId>
+                          @{certify.username} (ID: {certify.userId})
+                        </UserId>
                       </UserDetails>
                       <StatusBadge status={certify.certifyStatus}>
                         {getStatusIcon(certify.certifyStatus)}
@@ -844,25 +958,187 @@ export default function CertifyListPage() {
                       </StatusBadge>
                     </UserInfo>
 
-                    <CertifyImage
-                      src={certify.certifyFile.path}
-                      alt={`${certify.nickname}의 인증`}
-                      onClick={() => window.open(certify.certifyFile.path, '_blank')}
-                    />
+                    {challengeInfo?.certifyTypeCode === "LINK" ? (
+                      <div
+                        style={{
+                          padding: "1rem",
+                          background: "rgba(102, 126, 234, 0.1)",
+                          borderRadius: "0.75rem",
+                          border: "1px solid rgba(102, 126, 234, 0.2)",
+                          marginBottom: "1rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            marginBottom: "0.5rem",
+                          }}
+                        >
+                          <MessageCircle size={16} color="#667eea" />
+                          <span
+                            style={{
+                              fontSize: "0.875rem",
+                              fontWeight: "600",
+                              color: "#667eea",
+                            }}
+                          >
+                            링크 인증
+                          </span>
+                        </div>
+                        <a
+                          href={certify.certifyLink || ""}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            color: "#667eea",
+                            textDecoration: "underline",
+                            wordBreak: "break-all",
+                            fontSize: "0.875rem",
+                            display: "block",
+                            padding: "0.5rem",
+                            background: "rgba(255, 255, 255, 0.5)",
+                            borderRadius: "0.5rem",
+                            border: "1px solid rgba(102, 126, 234, 0.2)",
+                            transition: "all 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background =
+                              "rgba(102, 126, 234, 0.1)";
+                            e.currentTarget.style.transform =
+                              "translateY(-1px)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background =
+                              "rgba(255, 255, 255, 0.5)";
+                            e.currentTarget.style.transform = "translateY(0)";
+                          }}
+                        >
+                          🔗 {certify.certifyLink}
+                        </a>
+                      </div>
+                    ) : challengeInfo?.certifyTypeCode === "TEXT" ? (
+                      <div
+                        style={{
+                          padding: "1rem",
+                          background: "rgba(16, 185, 129, 0.1)",
+                          borderRadius: "0.75rem",
+                          border: "1px solid rgba(16, 185, 129, 0.2)",
+                          marginBottom: "1rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            marginBottom: "0.5rem",
+                          }}
+                        >
+                          <MessageCircle size={16} color="#10b981" />
+                          <span
+                            style={{
+                              fontSize: "0.875rem",
+                              fontWeight: "600",
+                              color: "#10b981",
+                            }}
+                          >
+                            텍스트 인증
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            color: "#374151",
+                            margin: 0,
+                            fontSize: "0.875rem",
+                            lineHeight: "1.5",
+                            whiteSpace: "pre-wrap",
+                            padding: "0.75rem",
+                            background: "rgba(255, 255, 255, 0.7)",
+                            borderRadius: "0.5rem",
+                            border: "1px solid rgba(16, 185, 129, 0.2)",
+                            minHeight: "60px",
+                          }}
+                        >
+                          📝{" "}
+                          {certify.certifyLink ||
+                            certify.certifyFile?.path ||
+                            ""}
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            marginBottom: "0.5rem",
+                            padding: "0.5rem",
+                            background: "rgba(245, 158, 11, 0.1)",
+                            borderRadius: "0.5rem",
+                            border: "1px solid rgba(245, 158, 11, 0.2)",
+                          }}
+                        >
+                          <MessageCircle size={16} color="#f59e0b" />
+                          <span
+                            style={{
+                              fontSize: "0.875rem",
+                              fontWeight: "600",
+                              color: "#f59e0b",
+                            }}
+                          >
+                            사진 인증
+                          </span>
+                        </div>
+                        <CertifyImage
+                          src={certify.certifyFile?.path || ""}
+                          alt={`${certify.nickname}의 인증`}
+                          onClick={() =>
+                            certify.certifyFile?.path &&
+                            window.open(certify.certifyFile.path, "_blank")
+                          }
+                        />
+                      </div>
+                    )}
 
                     {certify.objectionReason && (
-                      <div style={{ 
-                        padding: '0.75rem', 
-                        background: 'rgba(239, 68, 68, 0.1)', 
-                        borderRadius: '0.5rem', 
-                        marginBottom: '1rem',
-                        border: '1px solid rgba(239, 68, 68, 0.2)'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <div
+                        style={{
+                          padding: "0.75rem",
+                          background: "rgba(239, 68, 68, 0.1)",
+                          borderRadius: "0.5rem",
+                          marginBottom: "1rem",
+                          border: "1px solid rgba(239, 68, 68, 0.2)",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            marginBottom: "0.5rem",
+                          }}
+                        >
                           <MessageCircle size={16} color="#ef4444" />
-                          <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#ef4444' }}>이의신청</span>
+                          <span
+                            style={{
+                              fontSize: "0.875rem",
+                              fontWeight: "600",
+                              color: "#ef4444",
+                            }}
+                          >
+                            이의신청
+                          </span>
                         </div>
-                        <p style={{ fontSize: '0.875rem', color: '#374151', margin: 0 }}>
+                        <p
+                          style={{
+                            fontSize: "0.875rem",
+                            color: "#374151",
+                            margin: 0,
+                          }}
+                        >
                           {certify.objectionReason}
                         </p>
                       </div>
@@ -871,7 +1147,7 @@ export default function CertifyListPage() {
                     <ActionButtons>
                       {canTakeAction(certify) && (
                         <>
-                          {certify.certifyStatus === 'WAIT' && (
+                          {certify.certifyStatus === "WAIT" && (
                             <>
                               <ActionButton
                                 variant="approve"
@@ -893,7 +1169,7 @@ export default function CertifyListPage() {
                               </ActionButton>
                             </>
                           )}
-                          {certify.certifyStatus === 'OBJECTION' && (
+                          {certify.certifyStatus === "OBJECTION" && (
                             <>
                               <ActionButton
                                 variant="approve"
@@ -921,7 +1197,7 @@ export default function CertifyListPage() {
                         <ActionButton
                           variant="info"
                           disabled
-                          style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                          style={{ opacity: 0.6, cursor: "not-allowed" }}
                         >
                           {getStatusIcon(certify.certifyStatus)}
                           {getStatusText(certify.certifyStatus)}
@@ -954,33 +1230,32 @@ export default function CertifyListPage() {
               {getModalIcon()}
               {getModalTitle()}
             </ModalTitle>
-            
+
             <FormGroup>
               <FormLabel>
-                {modalType?.includes('approve') ? '승인' : '거절'} 사유
+                {modalType?.includes("approve") ? "승인" : "거절"} 사유
               </FormLabel>
               <FormTextarea
-                placeholder={`${modalType?.includes('approve') ? '승인' : '거절'} 사유를 입력하세요...`}
+                placeholder={`${
+                  modalType?.includes("approve") ? "승인" : "거절"
+                } 사유를 입력하세요...`}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
               />
             </FormGroup>
-            
+
             <ModalButtons>
               <ModalButton
                 variant="secondary"
                 onClick={() => {
                   setShowModal(false);
-                  setReason('');
+                  setReason("");
                   setSelectedCertify(null);
                 }}
               >
                 취소
               </ModalButton>
-              <ModalButton
-                variant="primary"
-                onClick={handleModalSubmit}
-              >
+              <ModalButton variant="primary" onClick={handleModalSubmit}>
                 {getModalButtonText()}
               </ModalButton>
             </ModalButtons>

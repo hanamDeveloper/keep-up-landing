@@ -118,7 +118,7 @@ export const appConfig = {
     terms: '/terms',
     privacy: '/privacy',
     payment: '/payment',
-    email: 'support@keepup.kr'
+    email: 'jobroapp@gmail.com'
   },
   
   seo: {

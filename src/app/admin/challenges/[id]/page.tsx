@@ -6,10 +6,6 @@ import { motion } from "framer-motion";
 import styled from "@emotion/styled";
 import {
   ArrowLeft,
-  Trophy,
-  LogOut,
-  Menu,
-  X,
   CheckCircle,
   XCircle,
   DollarSign,
@@ -26,63 +22,15 @@ import {
 import { API } from "@/api/axios";
 import { FILE_RESPONSE } from "@/hooks/useFileUpload";
 import ChallengeEditForm from "./components/ChallengeEditForm";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
 const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
-`;
 
-const Sidebar = styled(motion.div)<{ isOpen: boolean }>`
-  width: 280px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
-  display: ${(props) => (props.isOpen ? "block" : "none")};
-
-  @media (min-width: 1024px) {
-    display: block;
-  }
-`;
-
-const SidebarHeader = styled.div`
-  padding: 2rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-`;
-
-const Logo = styled.h2`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin: 0;
-`;
-
-const Nav = styled.nav`
-  padding: 1rem;
-`;
-
-const NavItem = styled(motion.a)<{ active?: boolean }>`
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  margin: 0.25rem 0;
-  border-radius: 0.75rem;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  background: ${(props) =>
-    props.active
-      ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-      : "transparent"};
-  color: ${(props) => (props.active ? "white" : "#6b7280")};
-
-  &:hover {
-    background: ${(props) =>
-      props.active
-        ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-        : "rgba(102, 126, 234, 0.1)"};
-    color: ${(props) => (props.active ? "white" : "#374151")};
-    transform: translateX(4px);
+  @media (max-width: 1023px) {
+    flex-direction: column;
   }
 `;
 
@@ -90,6 +38,13 @@ const MainContent = styled.div`
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  margin-top: 0;
+  transition: margin-left 0.3s ease;
+
+  @media (max-width: 1023px) {
+    padding: 1rem;
+    margin-top: 4rem; /* 모바일 헤더 높이만큼 */
+  }
 `;
 
 const Header = styled(motion.div)`
@@ -426,42 +381,6 @@ const ActionButton = styled(motion.button)<{
   }}
 `;
 
-const MobileHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-
-  @media (min-width: 1024px) {
-    display: none;
-  }
-`;
-
-const LogoutButton = styled(motion.button)`
-  position: absolute;
-  bottom: 2rem;
-  left: 2rem;
-  right: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 0.75rem;
-  color: #dc2626;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: rgba(239, 68, 68, 0.2);
-    transform: translateY(-2px);
-  }
-`;
 
 const LoadingContainer = styled.div`
   min-height: 100vh;
@@ -512,6 +431,7 @@ interface ChallengeDetail {
   dayTypeList: string[];
   link: string;
   modeType: "DAILY" | "GOAL";
+  certifyTypeCode?: "PICTURE" | "TEXT" | "LINK";
 }
 
 interface ChallengeDetailResponse {
@@ -534,7 +454,6 @@ const DAY_TYPE_LABELS: { [key: string]: string } = {
 export default function ChallengeDetailPage() {
   const [challenge, setChallenge] = useState<ChallengeDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<
@@ -584,7 +503,7 @@ export default function ChallengeDetailPage() {
         title: editedChallenge.title || challenge.title,
         content: editedChallenge.content || challenge.content,
         categoryCode: editedChallenge.categoryType || challenge.categoryType,
-        certifyTypeCode: "PICTURE",
+        certifyTypeCode: editedChallenge.certifyTypeCode || challenge.certifyTypeCode || "PICTURE",
         startDate: editedChallenge.startDate || challenge.startDate,
         endDate: editedChallenge.endDate || challenge.endDate,
         price: editedChallenge.price || challenge.price,
@@ -640,7 +559,7 @@ export default function ChallengeDetailPage() {
         title: challenge.title,
         content: challenge.content,
         categoryCode: challenge.categoryType,
-        certifyTypeCode: "PICTURE",
+        certifyTypeCode: challenge.certifyTypeCode || "PICTURE",
         startDate: challenge.startDate,
         endDate: challenge.endDate,
         price: challenge.price,
@@ -664,15 +583,6 @@ export default function ChallengeDetailPage() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await API.post("/admin/logout");
-      router.push("/admin");
-    } catch (error) {
-      console.error("로그아웃 실패:", error);
-      router.push("/admin");
-    }
-  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("ko-KR", {
@@ -693,6 +603,19 @@ export default function ChallengeDetailPage() {
         return "기타";
       default:
         return "알 수 없음";
+    }
+  };
+
+  const getCertifyTypeText = (certifyType: string) => {
+    switch (certifyType) {
+      case "PICTURE":
+        return "사진 인증";
+      case "TEXT":
+        return "텍스트 인증";
+      case "LINK":
+        return "링크 인증";
+      default:
+        return certifyType;
     }
   };
 
@@ -731,63 +654,7 @@ export default function ChallengeDetailPage() {
 
   return (
     <Container>
-      {/* 모바일 헤더 */}
-      <MobileHeader>
-        <h1
-          style={{
-            fontSize: "1.25rem",
-            fontWeight: "700",
-            color: "#1f2937",
-            margin: 0,
-          }}
-        >
-          챌린지 상세
-        </h1>
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          style={{
-            padding: "0.5rem",
-            borderRadius: "0.5rem",
-            color: "#6b7280",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </MobileHeader>
-
-      <Sidebar
-        isOpen={sidebarOpen}
-        initial={{ x: -280 }}
-        animate={{ x: sidebarOpen ? 0 : -280 }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      >
-        <SidebarHeader>
-          <Logo>KeepUp 관리자</Logo>
-        </SidebarHeader>
-
-        <Nav>
-          <NavItem href="/admin/challenges">
-            <Trophy size={20} style={{ marginRight: "0.75rem" }} />
-            챌린지 관리
-          </NavItem>
-          <NavItem href="/admin/payments">
-            <Trophy size={20} style={{ marginRight: "0.75rem" }} />
-            결제 관리
-          </NavItem>
-        </Nav>
-
-        <LogoutButton
-          onClick={handleLogout}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <LogOut size={20} style={{ marginRight: "0.5rem" }} />
-          로그아웃
-        </LogoutButton>
-      </Sidebar>
+      <AdminSidebar activePage="challenges" />
 
       <MainContent>
         <Header
@@ -885,6 +752,17 @@ export default function ChallengeDetailPage() {
                   }}
                 >
                   모드 타입: {challenge.modeType === "DAILY" ? "습관 (DAILY)" : "목표 (GOAL)"}
+                </div>
+
+                <div
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    color: "#374151",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  인증 타입: {getCertifyTypeText(challenge.certifyTypeCode || "PICTURE")}
                 </div>
 
                 <div
