@@ -1,0 +1,12 @@
+[
+    {
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.keepup.challengeapp",
+        "sha256_cert_fingerprints": [
+          "93:C8:A8:59:0C:31:F5:60:40:F8:12:88:CD:15:7C:D1:13:CE:9F:AA:59:DD:DC:BB:7C:36:8D:B2:AB:42:CD:B7"
+        ]
+      }
+    }
+  ]
