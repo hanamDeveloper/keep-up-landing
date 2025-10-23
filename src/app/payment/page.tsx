@@ -2,10 +2,10 @@
 
 import { Copy, CheckCircle, AlertCircle, CreditCard, Building2, User } from 'lucide-react';
 import { appConfig as config } from '@/lib/config';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function PaymentPage() {
+function PaymentContent() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const price = searchParams.get('price');
@@ -417,5 +417,13 @@ export default function PaymentPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <PaymentContent />
+    </Suspense>
   );
 }
