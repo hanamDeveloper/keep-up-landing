@@ -86,8 +86,8 @@ const useDeepLink = (challengeId: string) => {
   const isAndroid = /Android/.test(navigator.userAgent);
 
   const deepLink = `keepup://challenge/${challengeId}`;
-  const appStoreUrl = 'https://apps.apple.com/kr/app/keepup';
-  const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.keepup';
+  const appStoreUrl = 'https://apps.apple.com/app/id6751836138';
+  const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.keepup.challengeapp';
 
   const redirectToApp = () => {
     console.log('딥링크 시도:', deepLink);
