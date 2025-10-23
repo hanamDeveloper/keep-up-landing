@@ -106,9 +106,9 @@ export const appConfig = {
   },
   
   payment: {
-    bankName: '국민은행',
-    accountNumber: '123456-78-901234',
-    accountHolder: '(주)KeepUp',
+    bankName: '농협',
+    accountNumber: '351-1375-9674-03',
+    accountHolder: '김은미(자브로(jobro))',
     defaultAmount: 10000,
     description: 'KeepUp 챌린지 참가비'
   },
@@ -125,6 +125,6 @@ export const appConfig = {
     title: 'KeepUp - 습관을 돈으로 지키는 가장 현실적인 방법',
     description: '매일 인증하는 챌린지로 습관을 형성하고 보너스를 받으세요. 완주하면 보너스를 돌려받고, 실패해도 다시 시도하도록 설계된 KeepUp을 만나보세요.',
     keywords: '챌린지, 습관, 공부, 운동, 동기부여, 습관형성, 챌린지앱',
-    ogImage: '/og.jpg'
+    ogImage: '/og.png'
   }
 };

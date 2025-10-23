@@ -3,9 +3,12 @@
 import { Copy, CheckCircle, AlertCircle, CreditCard, Building2, User } from 'lucide-react';
 import { appConfig as config } from '@/lib/config';
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function PaymentPage() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const price = searchParams.get('price');
 
   const copyToClipboard = async (text: string, field: string) => {
     try {
@@ -255,14 +258,14 @@ export default function PaymentPage() {
               color: '#a1a1aa',
               marginBottom: '8px'
             }}>
-              기본 참가비
+              참가비
             </div>
             <div style={{
               fontSize: '24px',
               fontWeight: '700',
               color: '#6366f1'
             }}>
-              {config.payment.defaultAmount.toLocaleString()}원
+              {price ? parseInt(price).toLocaleString() : config.payment.defaultAmount.toLocaleString()}원
             </div>
             <div style={{
               fontSize: '12px',
