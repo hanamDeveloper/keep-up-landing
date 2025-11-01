@@ -2,13 +2,36 @@
 
 import { Copy, CheckCircle, AlertCircle, CreditCard, Building2, User } from 'lucide-react';
 import { appConfig as config } from '@/lib/config';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { getSuccessChallengeDetail } from '@/api/challenge';
 
 function PaymentContent() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const price = searchParams.get('price');
+  const challengeId = searchParams.get('challengeId');
+  const [price, setPrice] = useState<number | null>(null);
+  const [isLoadingPrice, setIsLoadingPrice] = useState(false);
+
+  useEffect(() => {
+    const fetchChallengePrice = async () => {
+      if (challengeId) {
+        setIsLoadingPrice(true);
+        try {
+          const response = await getSuccessChallengeDetail(parseInt(challengeId));
+          if (response?.data?.price) {
+            setPrice(response.data.price);
+          }
+        } catch (error) {
+          console.error('챌린지 상세 정보 로드 실패:', error);
+        } finally {
+          setIsLoadingPrice(false);
+        }
+      }
+    };
+
+    fetchChallengePrice();
+  }, [challengeId]);
 
   const copyToClipboard = async (text: string, field: string) => {
     try {
@@ -265,7 +288,11 @@ function PaymentContent() {
               fontWeight: '700',
               color: '#6366f1'
             }}>
-              {price ? parseInt(price).toLocaleString() : config.payment.defaultAmount.toLocaleString()}원
+              {isLoadingPrice ? (
+                '로딩 중...'
+              ) : (
+                (price !== null ? price : config.payment.defaultAmount).toLocaleString() + '원'
+              )}
             </div>
             <div style={{
               fontSize: '12px',
